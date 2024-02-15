@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_connect/pages/appointment_page.dart';
 import 'package:health_connect/pages/home_page.dart';
 import 'package:health_connect/theme/colors.dart';
 
@@ -8,13 +9,6 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GlobalKey<NavigatorState> _shellNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-//set up nested navigation using ShellRoute,
-// which is a pattern where an additional Navigator is placed in the widget tree
-// to be used instead of the root navigator. This allows deep-links to display
-// pages along with other UI components such as a BottomNavigationBar.
-//
-
-/// An example demonstrating how to use [ShellRoute]
 class NavigationRoute extends StatelessWidget {
   NavigationRoute({super.key});
 
@@ -59,7 +53,7 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DetailsScreen(label: 'A');
+                  return const AppointmentPage();
                 },
               ),
             ],
@@ -110,6 +104,8 @@ class NavigationRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Root Navigator Key hash code: ${_rootNavigatorKey.hashCode}");
+    print("Shell Navigator Key hash code: ${_shellNavigatorKey.hashCode}");
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -139,7 +135,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
-        selectedIconTheme: IconThemeData(color: mediumBlueGrayColor),
+        selectedIconTheme: const IconThemeData(color: mediumBlueGrayColor),
         selectedItemColor: mediumBlueGrayColor, // Change selected item color
         unselectedItemColor: Colors.black, // Change unselected item color
         selectedLabelStyle: const TextStyle(

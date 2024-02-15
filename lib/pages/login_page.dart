@@ -1,15 +1,20 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_connect/components/my_textfield.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/square_tile.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
-  LoginPage({Key? key, required this.onTap});
+  const LoginPage({
+    Key? key,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
