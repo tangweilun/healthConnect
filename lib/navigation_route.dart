@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/pages/home_page.dart';
+import 'package:health_connect/theme/colors.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -137,23 +138,29 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 4,
+        selectedIconTheme: IconThemeData(color: mediumBlueGrayColor),
+        selectedItemColor: mediumBlueGrayColor, // Change selected item color
+        unselectedItemColor: Colors.black, // Change unselected item color
+        selectedLabelStyle: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold), // Change selected label style
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            backgroundColor: Colors.black,
             icon: Icon(Icons.home),
             label: 'HomePage',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'A Screen',
+            icon: Icon(Icons.medical_information),
+            label: 'Medical Record',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'B Screen',
+            icon: Icon(Icons.report),
+            label: 'Lab Result',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notification_important_rounded),
-            label: 'C Screen',
+            icon: Icon(Icons.account_circle),
+            label: 'Profile',
           ),
         ],
         currentIndex: _calculateSelectedIndex(context),

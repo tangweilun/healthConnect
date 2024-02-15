@@ -4,6 +4,8 @@ import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/square_tile.dart';
 import 'package:health_connect/services/auth_services.dart';
+import 'package:health_connect/theme/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -61,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -72,21 +74,18 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: screenHeight * 0.1,
                 ),
-                //logo
-                Icon(
-                  Icons.lock,
-                  size: screenHeight * 0.2,
+                Image.asset(
+                  'assets/images/bpm_helthcare.jpg',
+                  height: screenWidth / 3,
+                  width: screenHeight / 3,
                 ),
                 //welcome back
                 SizedBox(
                   height: screenHeight * 0.05,
                 ),
-                Text(
-                  'Welcome back ',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                  ),
-                ),
+                Text('Welcome back ',
+                    style: GoogleFonts.roboto(
+                        color: mediumBlueGrayColor, fontSize: 24)),
                 SizedBox(
                   height: screenHeight * 0.03,
                 ),
