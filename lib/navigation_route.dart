@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/pages/appointment_page.dart';
+import 'package:health_connect/pages/doctor_detail_page.dart';
 import 'package:health_connect/pages/home_page.dart';
 import 'package:health_connect/theme/colors.dart';
 
@@ -84,7 +85,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/c',
             builder: (BuildContext context, GoRouterState state) {
-              return const ScreenC();
+              return DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -104,8 +105,6 @@ class NavigationRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Root Navigator Key hash code: ${_rootNavigatorKey.hashCode}");
-    print("Shell Navigator Key hash code: ${_shellNavigatorKey.hashCode}");
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
