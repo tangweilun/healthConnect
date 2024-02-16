@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_connect/firebase_options.dart';
-import 'package:health_connect/pages/appointment_page.dart';
+
 import 'package:health_connect/pages/auth_page.dart';
-import 'package:health_connect/pages/booking_page.dart';
+import 'package:health_connect/pages/login_page.dart';
 
 // import 'package:health_connect/pages/auth_page.dart';
 
@@ -23,8 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      // home: AuthPage(),
-      home: BookingPage(),
+      home: AuthPage(),
     );
   }
 }

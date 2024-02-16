@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:health_connect/pages/appointment_page.dart';
 import 'package:health_connect/pages/doctor_detail_page.dart';
 import 'package:health_connect/pages/home_page.dart';
+import 'package:health_connect/pages/success_booked.dart';
 import 'package:health_connect/theme/colors.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =

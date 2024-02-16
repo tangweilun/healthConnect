@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  CustomAppBar({
+  const CustomAppBar({
     Key? key,
     this.appTitle,
     this.route,

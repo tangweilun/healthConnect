@@ -123,7 +123,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: screenHeight * 0.03,
                 ),
+
                 MyButton(
+                  disable: emailController.text.isEmpty &&
+                          passwordController.text.isEmpty &&
+                          confirmPasswordController.text.isEmpty
+                      ? false
+                      : true,
+                  width: screenWidth * 0.5,
                   text: "Register",
                   onTap: signUserIn,
                 ),

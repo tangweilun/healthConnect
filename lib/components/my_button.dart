@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
+  final double width;
+  final bool disable;
   final String text;
-  MyButton({Key? key, required this.onTap, required this.text})
+  MyButton(
+      {Key? key,
+      required this.onTap,
+      required this.text,
+      required this.width,
+      required this.disable})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate button width as a percentage of the screen width
-    double buttonWidth = screenWidth * 0.8; // Adjust the percentage as needed
-
     return GestureDetector(
-      onTap: onTap,
+      onTap: disable ? null : onTap,
       child: Container(
-        width: buttonWidth,
+        width: width,
         padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding here
         margin: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
