@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:lottie/lottie.dart';
 
@@ -29,8 +30,10 @@ class AppointmentBooked extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: MyButton(
                 width: double.infinity,
-                text: 'Back to HomePage',
-                onTap: () {},
+                text: 'View Appointment',
+                onTap: () {
+                  GoRouter.of(context).go('/viewappoinment');
+                },
                 disable: false,
               ),
             )

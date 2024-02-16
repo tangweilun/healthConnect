@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_connect/theme/colors.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
@@ -15,6 +16,8 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine the color based on the disable state
+    Color buttonColor = disable ? Colors.grey : mediumBlueGrayColor;
     return GestureDetector(
       onTap: disable ? null : onTap,
       child: Container(
@@ -22,7 +25,7 @@ class MyButton extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding here
         margin: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: buttonColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(

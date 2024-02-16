@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:health_connect/firebase_options.dart';
 
 import 'package:health_connect/pages/auth_page.dart';
-import 'package:health_connect/pages/login_page.dart';
 
 // import 'package:health_connect/pages/auth_page.dart';
 

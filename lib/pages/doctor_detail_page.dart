@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/theme/colors.dart';
@@ -30,24 +31,14 @@ class _DoctorDetailsState extends State<DoctorDetails> {
         ],
       ),
       body: SafeArea(
-          child: Column(
-        children: <Widget>[
-          AboutDoctor(),
-          DetailBody(), //build doctor avatar and intro here
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: MyButton(
-              width: double.infinity,
-              disable: false,
-              onTap: () {
-                //navigate to booking appointment page
-                // Navigator.of(context).pushNamed('');
-              },
-              text: "Book Appointment",
-            ),
-          )
-        ],
+          child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            AboutDoctor(),
+            DetailBody(), //build doctor avatar and intro here
+            // const Spacer(),
+          ],
+        ),
       )),
     );
   }
@@ -70,7 +61,7 @@ class AboutDoctor extends StatelessWidget {
             backgroundColor: Colors.white,
           ),
           const SizedBox(
-            height: 23,
+            height: 16,
           ),
           const Text(
             'Dr Richard Tan',
@@ -132,7 +123,9 @@ class DetailBody extends StatelessWidget {
           SizedBox(
             width: screenWidth * 0.5,
           ),
-          // DoctorInfo(),
+
+          //doctor exp, patient and rating
+          DoctorInfo(),
           SizedBox(
             height: screenHeight * 0.05,
           ),
@@ -140,57 +133,54 @@ class DetailBody extends StatelessWidget {
             'About Doctor',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
+          SizedBox(
+            height: screenHeight * 0.05,
+          ),
+          const Text(
+            'Dr.Tan is an experience Dentist at Sarawal. he is graduated since 2008, and completed his training at Sungai Buloh Hospital',
+            style: TextStyle(fontWeight: FontWeight.w500, height: 1.5),
+            softWrap: true,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: MyButton(
+              width: double.infinity,
+              disable: false,
+              onTap: () {
+                //navigate to booking appointment page
+                GoRouter.of(context).go('/doctordetail/appointmentbooking');
+              },
+              text: "Book Appointment",
+            ),
+          )
         ],
       ),
     );
   }
 }
 
-// class DoctorInfo extends StatelessWidget {
-//   const DoctorInfo({super.key});
+class DoctorInfo extends StatelessWidget {
+  const DoctorInfo({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     double screenHeight = MediaQuery.of(context).size.height;
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     return Row(
-//       children: <Widget>[
-//         Expanded(
-//           child: Container(
-//             decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(15),
-//                 color: mediumBlueGrayColor),
-//             padding: const EdgeInsets.symmetric(
-//               vertical: 30,
-//               horizontal: 15,
-//             ),
-//             child: Column(children: <Widget>[
-//               const Text(
-//                 'Patients',
-//                 style: TextStyle(
-//                   color: Colors.black,
-//                   fontSize: 12,
-//                   fontWeight: FontWeight.w600,
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: screenHeight * 0.2,
-//               ),
-//               const Text(
-//                 '109',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 12,
-//                   fontWeight: FontWeight.w800,
-//                 ),
-//               )
-//             ]),
-//           ),
-//         )
-//       ],
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Row(
+      children: [
+        InfoCard(label: 'Patient', value: "109"),
+        SizedBox(
+          width: screenWidth * 0.05,
+        ),
+        InfoCard(label: 'Experience', value: "10 Years"),
+        SizedBox(
+          width: screenWidth * 0.05,
+        ),
+        InfoCard(label: 'Rating', value: "4.6"),
+      ],
+    );
+  }
+}
 
 class InfoCard extends StatelessWidget {
   const InfoCard({super.key, required this.label, required this.value});
@@ -207,8 +197,8 @@ class InfoCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             color: mediumBlueGrayColor),
         padding: const EdgeInsets.symmetric(
-          vertical: 30,
-          horizontal: 15,
+          vertical: 24,
+          horizontal: 10,
         ),
         child: Column(children: <Widget>[
           Text(
@@ -220,7 +210,7 @@ class InfoCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: screenHeight * 0.5,
+            height: 4,
           ),
           Text(
             value,

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/theme/colors.dart';
@@ -66,39 +67,43 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               )
             : SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      setState(() {
-                        //when selected, update current index and st time selected to true
-                        _currentindex = index;
-                        _timeSelected = true;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        border: Border.all(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          //when selected, update current index and st time selected to true
+                          _currentindex = index;
+                          _timeSelected = true;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: _currentindex == index
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
                           color: _currentindex == index
-                              ? Colors.white
-                              : Colors.black,
+                              ? mediumBlueGrayColor
+                              : null,
                         ),
-                        borderRadius: BorderRadius.circular(15),
-                        color:
-                            _currentindex == index ? mediumBlueGrayColor : null,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${index + 9}:00 ${index + 9 > 11 ? "PM" : "AM"}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _currentindex == index ? Colors.white : null,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '${index + 9}:00 ${index + 9 > 11 ? "PM" : "AM"}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _currentindex == index ? Colors.white : null,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  },
+                  childCount: 8,
+                ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, childAspectRatio: 1.5),
               ),
@@ -108,7 +113,12 @@ class _BookingPageState extends State<BookingPage> {
             child: MyButton(
               width: double.infinity,
               disable: _timeSelected && _dateSelected ? false : true,
-              onTap: () {},
+              onTap: () {
+                //navigato to the appointment booked page
+
+                GoRouter.of(context)
+                    .go('/doctordetail/appointmentbooking/successbooked');
+              },
               text: 'Make Appointment',
             ),
           ),
