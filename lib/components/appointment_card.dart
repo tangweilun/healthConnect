@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:health_connect/pages/appointment_page.dart';
+import 'package:health_connect/pages/viewappointment_page.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class AppointmentCard extends StatefulWidget {

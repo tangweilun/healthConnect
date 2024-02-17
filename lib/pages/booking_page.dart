@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/models/appointment_model.dart';
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -116,6 +117,12 @@ class _BookingPageState extends State<BookingPage> {
               onTap: () {
                 //navigato to the appointment booked page
 
+                // final appointment = Appointment(
+                //     id: id,
+                //     patientId: patientId,
+                //     doctorId: doctorId,
+                //     date: date,
+                //     status: status);
                 GoRouter.of(context)
                     .go('/doctordetail/appointmentbooking/successbooked');
               },

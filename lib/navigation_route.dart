@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/pages/appointment_page.dart';
+import 'package:health_connect/pages/viewappointment_page.dart';
 import 'package:health_connect/pages/booking_page.dart';
 import 'package:health_connect/pages/doctor_detail_page.dart';
 import 'package:health_connect/pages/home_page.dart';
@@ -46,7 +46,7 @@ class NavigationRoute extends StatelessWidget {
 
           /// The first screen to display in the bottom navigation bar.
           GoRoute(
-            path: '/viewappoinment',
+            path: '/viewappointment',
             builder: (BuildContext context, GoRouterState state) {
               return AppointmentPage();
             },
@@ -200,7 +200,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     if (location.startsWith('/homepage')) {
       return 0;
     }
-    if (location.startsWith('/viewappoinment')) {
+    if (location.startsWith('/viewappointment')) {
       return 1;
     }
     if (location.startsWith('/b')) {

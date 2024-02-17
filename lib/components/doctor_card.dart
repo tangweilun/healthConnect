@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/theme/colors.dart';
+
+final selectedDoctorProvider = StateProvider<Doctor?>((ref) => null);
 
 class DoctorCard extends StatefulWidget {
   const DoctorCard({super.key});
@@ -10,6 +14,10 @@ class DoctorCard extends StatefulWidget {
 }
 
 class _DoctorCardState extends State<DoctorCard> {
+  // late final Doctor doctor;
+  Doctor doctor = Doctor(
+    id: "D001",
+  );
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -82,6 +90,7 @@ class _DoctorCardState extends State<DoctorCard> {
         ),
         onTap: () {
           //redirect to doctor detail
+          // context.read(selectedDoctorProvider).state = doctor;
           GoRouter.of(context).go('/doctordetail');
         },
       ),

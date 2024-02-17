@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -49,11 +50,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 color: Colors.white,
                 onPressed: () {
                   //if route is given , then this icon button will navigate to
-                  if (widget.route != null) {
-                    Navigator.of(context).pushNamed(widget.route!);
-                  } else {
-                    Navigator.of(context).pop();
-                  }
+                  GoRouter.of(context).go('/homepage');
                 },
               ))
           : null,

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/theme/colors.dart';
 
@@ -30,7 +32,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
               ))
         ],
       ),
-      body: SafeArea(
+      body: const SafeArea(
           child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -125,7 +127,7 @@ class DetailBody extends StatelessWidget {
           ),
 
           //doctor exp, patient and rating
-          DoctorInfo(),
+          const DoctorInfo(),
           SizedBox(
             height: screenHeight * 0.05,
           ),
@@ -164,19 +166,18 @@ class DoctorInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Row(
       children: [
-        InfoCard(label: 'Patient', value: "109"),
+        const InfoCard(label: 'Patient', value: "109"),
         SizedBox(
           width: screenWidth * 0.05,
         ),
-        InfoCard(label: 'Experience', value: "10 Years"),
+        const InfoCard(label: 'Experience', value: "10 Years"),
         SizedBox(
           width: screenWidth * 0.05,
         ),
-        InfoCard(label: 'Rating', value: "4.6"),
+        const InfoCard(label: 'Rating', value: "4.6"),
       ],
     );
   }
@@ -189,8 +190,6 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -203,18 +202,18 @@ class InfoCard extends StatelessWidget {
         child: Column(children: <Widget>[
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 4,
           ),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w800,
