@@ -32,7 +32,7 @@ class AppointmentBooked extends StatelessWidget {
                 width: double.infinity,
                 text: 'View Appointment',
                 onTap: () {
-                  GoRouter.of(context).go('/viewappoinment');
+                  GoRouter.of(context).go('/viewappointment');
                 },
                 disable: false,
               ),

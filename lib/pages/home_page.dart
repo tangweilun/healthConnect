@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/appointment_card.dart';
-import 'package:health_connect/components/doctor_card.dart';
+
 import 'package:health_connect/models/doctor_model.dart';
+import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/theme/colors.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   HomePage({super.key});
 
   final user = FirebaseAuth.instance.currentUser!;
@@ -44,7 +46,7 @@ class HomePage extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     //read doctor from the firestore
     Stream<List<Doctor>> readDoctor() => FirebaseFirestore.instance
         .collection('doctor')
@@ -55,6 +57,14 @@ class HomePage extends StatelessWidget {
     //build doctor
     Widget buildDoctor(Doctor doctor) => GestureDetector(
           onTap: () {
+            ref.read(selectedDoctorProvider.notifier).updateDoctorModel(
+                  doctor.name,
+                  doctor.category,
+                  doctor.experience,
+                  doctor.rating,
+                  doctor.image,
+                  doctor.description,
+                );
             GoRouter.of(context).go('/doctordetail');
           },
           child: ListTile(
@@ -75,13 +85,10 @@ class HomePage extends StatelessWidget {
             subtitle: Text(
               doctor.category,
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.arrow_forward_ios_rounded),
-              iconSize: 40,
+            trailing: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 40,
               color: mediumBlueGrayColor,
-              onPressed: () {
-                //if route is given , then this icon button will navigate to
-              },
             ),
           ),
         );
@@ -180,7 +187,7 @@ class HomePage extends StatelessWidget {
                   height: 20,
                 ),
                 //display appointment card here
-                AppointmentCard(),
+                const AppointmentCard(),
                 const SizedBox(
                   height: 18,
                 ),
@@ -195,28 +202,6 @@ class HomePage extends StatelessWidget {
                 const SizedBox(
                   height: 14,
                 ),
-                // Column(
-                //   children: List.generate(3, (index) {
-                //     return const DoctorCard();
-                //   }),
-                // )
-                // StreamBuilder(
-                //   stream: readDoctor(),
-                //   builder: (context, snapshot) {
-                //     if (snapshot.hasError) {
-                //       return Text('Something went wrong! ${snapshot.error}');
-                //     } else if (snapshot.hasData) {
-                //       final doctors = snapshot.data!;
-                //       return ListView(
-                //         shrinkWrap: true,
-                //         physics: NeverScrollableScrollPhysics(),
-                //         children: doctors.map(buildDoctor).toList(),
-                //       );
-                //     } else {
-                //       return const Text('Loading...');
-                //     }
-                //   },
-                // ),
                 StreamBuilder(
                   stream: readDoctor(),
                   builder: (context, snapshot) {
@@ -226,13 +211,13 @@ class HomePage extends StatelessWidget {
                       final doctors = snapshot.data!;
                       return ListView.separated(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                         itemCount: doctors.length,
                         itemBuilder: (context, index) {
                           return Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -243,7 +228,7 @@ class HomePage extends StatelessWidget {
                                   color: Colors.grey.withOpacity(0.5),
                                   spreadRadius: 2,
                                   blurRadius: 5,
-                                  offset: Offset(
+                                  offset: const Offset(
                                       0, 3), // changes position of shadow
                                 ),
                               ],
@@ -253,7 +238,7 @@ class HomePage extends StatelessWidget {
                         },
                       );
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   },
                 ),

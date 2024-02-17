@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/theme/colors.dart';
-
-final selectedDoctorProvider = StateProvider<Doctor?>((ref) => null);
 
 class DoctorCard extends StatefulWidget {
   const DoctorCard({super.key});
