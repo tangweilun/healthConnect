@@ -1,16 +1,16 @@
 class Appointment {
   final String id;
   final String patientId;
-  final String therapistId;
+  final String doctorId;
   final DateTime date;
-  final bool isBooked;
+  final String status;
 
   Appointment({
     required this.id,
     required this.patientId,
-    required this.therapistId,
+    required this.doctorId,
     required this.date,
-    this.isBooked = false,
+    required this.status,
   });
 
   // Convert the Appointment object to a Map (JSON-like structure)
@@ -18,9 +18,9 @@ class Appointment {
     return {
       'id': id,
       'patientId': patientId,
-      'therapistId': therapistId,
+      'doctorId': doctorId,
       'date': date.toIso8601String(), // Convert DateTime to ISO 8601 format
-      'isBooked': isBooked,
+      'status': status,
     };
   }
 
@@ -29,9 +29,9 @@ class Appointment {
     return Appointment(
       id: json['id'],
       patientId: json['patientId'],
-      therapistId: json['therapistId'],
+      doctorId: json['doctorId'],
       date: DateTime.parse(json['date']), // Parse ISO 8601 string to DateTime
-      isBooked: json['isBooked'],
+      status: json['status'],
     );
   }
 }

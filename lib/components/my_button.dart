@@ -1,53 +1,31 @@
-// import 'package:flutter/material.dart';
-
-// class MyButton extends StatelessWidget {
-//   final Function()? onTap;
-
-//   const MyButton({super.key, required this.onTap});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: Container(
-//         padding: EdgeInsets.all(25),
-//         margin: EdgeInsets.symmetric(horizontal: 25),
-//         decoration: BoxDecoration(
-//             color: Colors.black, borderRadius: BorderRadius.circular(8)),
-//         child: const Center(
-//             child: Text(
-//           "Sign In",
-//           style: TextStyle(
-//               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-//         )),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
+import 'package:health_connect/theme/colors.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;
+  final double width;
+  final bool disable;
   final String text;
-  MyButton({Key? key, required this.onTap, required this.text})
+  MyButton(
+      {Key? key,
+      required this.onTap,
+      required this.text,
+      required this.width,
+      required this.disable})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate button width as a percentage of the screen width
-    double buttonWidth = screenWidth * 0.8; // Adjust the percentage as needed
-
+    // Determine the color based on the disable state
+    Color buttonColor = disable ? Colors.grey : mediumBlueGrayColor;
     return GestureDetector(
-      onTap: onTap,
+      onTap: disable ? null : onTap,
       child: Container(
-        width: buttonWidth,
+        width: width,
         padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding here
         margin: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: buttonColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(

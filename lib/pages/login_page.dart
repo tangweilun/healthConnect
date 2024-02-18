@@ -1,15 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_connect/components/my_textfield.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/square_tile.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
-  LoginPage({Key? key, required this.onTap});
+  const LoginPage({
+    Key? key,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -21,6 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   void signUserIn() async {
+    // Check if the widget is still mounted
+    if (!mounted) return;
     //show loading circle
     showDialog(
         context: context,
@@ -36,9 +44,18 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text,
       );
 
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      // Check if the widget is still mounted before updating the UI
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      // Check if the widget is still mounted before updating the UI
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      // Navigator.pop(context);
       if (e.code == 'user-not-found') {
         showErrorMessage("Wrong Email"); // Pass the context here
       } else if (e.code == 'wrong-password') {
@@ -74,15 +91,19 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: screenHeight * 0.1,
                 ),
-                Image.asset(
-                  'assets/images/bpm_helthcare.jpg',
-                  height: screenWidth / 3,
-                  width: screenHeight / 3,
-                ),
+                Container(
+                    height: 200,
+                    width: 200,
+                    child: Lottie.asset('assets/doctor_animation.json')),
+                // Image.asset(
+                //   'assets/images/bpm_helthcare.jpg',
+                //   height: screenWidth / 3,
+                //   width: screenHeight / 3,
+                // ),
                 //welcome back
-                SizedBox(
-                  height: screenHeight * 0.05,
-                ),
+                // SizedBox(
+                //   height: screenHeight * 0.03,
+                // ),
                 Text('Welcome back ',
                     style: GoogleFonts.roboto(
                         color: mediumBlueGrayColor, fontSize: 24)),
@@ -125,6 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                   height: screenHeight * 0.03,
                 ),
                 MyButton(
+                  disable: emailController.text.isEmpty &&
+                          passwordController.text.isEmpty
+                      ? false
+                      : true,
+                  width: screenWidth * 0.5,
                   text: "Sign In",
                   onTap: signUserIn,
                 ),

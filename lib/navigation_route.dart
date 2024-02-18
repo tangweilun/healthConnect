@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_connect/pages/viewappointment_page.dart';
+import 'package:health_connect/pages/booking_page.dart';
+import 'package:health_connect/pages/doctor_detail_page.dart';
 import 'package:health_connect/pages/home_page.dart';
+import 'package:health_connect/pages/success_booked.dart';
 import 'package:health_connect/theme/colors.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -8,13 +12,6 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GlobalKey<NavigatorState> _shellNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-//set up nested navigation using ShellRoute,
-// which is a pattern where an additional Navigator is placed in the widget tree
-// to be used instead of the root navigator. This allows deep-links to display
-// pages along with other UI components such as a BottomNavigationBar.
-//
-
-/// An example demonstrating how to use [ShellRoute]
 class NavigationRoute extends StatelessWidget {
   NavigationRoute({super.key});
 
@@ -49,9 +46,9 @@ class NavigationRoute extends StatelessWidget {
 
           /// The first screen to display in the bottom navigation bar.
           GoRoute(
-            path: '/a',
+            path: '/viewappointment',
             builder: (BuildContext context, GoRouterState state) {
-              return const ScreenA();
+              return AppointmentPage();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -59,8 +56,37 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DetailsScreen(label: 'A');
+                  return const AppointmentPage();
                 },
+              ),
+            ],
+          ),
+
+          GoRoute(
+            path: '/doctordetail',
+            builder: (BuildContext context, GoRouterState state) {
+              return DoctorDetails();
+            },
+            routes: <RouteBase>[
+              // The details screen to display stacked on the inner Navigator.
+              // This will cover screen A but not the application shell.
+              GoRoute(
+                path: 'appointmentbooking',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const BookingPage();
+                },
+                routes: <RouteBase>[
+                  /// Same as "/a/details", but displayed on the root Navigator by
+                  /// specifying [parentNavigatorKey]. This will cover both screen B
+                  /// and the application shell.
+                  GoRoute(
+                    path: 'successbooked',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (BuildContext context, GoRouterState state) {
+                      return AppointmentBooked();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -90,7 +116,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/c',
             builder: (BuildContext context, GoRouterState state) {
-              return const ScreenC();
+              return DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -139,7 +165,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
-        selectedIconTheme: IconThemeData(color: mediumBlueGrayColor),
+        selectedIconTheme: const IconThemeData(color: mediumBlueGrayColor),
         selectedItemColor: mediumBlueGrayColor, // Change selected item color
         unselectedItemColor: Colors.black, // Change unselected item color
         selectedLabelStyle: const TextStyle(
@@ -152,7 +178,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_information),
-            label: 'Medical Record',
+            label: 'View Appointment',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.report),
@@ -174,7 +200,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     if (location.startsWith('/homepage')) {
       return 0;
     }
-    if (location.startsWith('/a')) {
+    if (location.startsWith('/viewappointment')) {
       return 1;
     }
     if (location.startsWith('/b')) {
@@ -191,7 +217,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       case 0:
         GoRouter.of(context).go('/homepage');
       case 1:
-        GoRouter.of(context).go('/a');
+        GoRouter.of(context).go('/viewappointment');
       case 2:
         GoRouter.of(context).go('/b');
       case 3:
