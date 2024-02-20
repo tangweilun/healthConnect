@@ -19,7 +19,8 @@ class Appointment {
       'id': id,
       'patientId': patientId,
       'doctorId': doctorId,
-      'date': date.toIso8601String(), // Convert DateTime to ISO 8601 format
+      'date': date.toIso8601String(),
+      // Convert DateTime to ISO 8601 format
       'status': status,
     };
   }

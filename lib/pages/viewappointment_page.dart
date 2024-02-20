@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:health_connect/models/appointment_model.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class AppointmentPage extends StatefulWidget {
@@ -48,6 +50,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<List<Appointment>> readAppointment() => FirebaseFirestore.instance
+        .collection('appointment')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Appointment.fromJson(doc.data()))
+            .toList());
+
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     List<dynamic> filteredSchedules = schedules.where((var schedule) {
@@ -139,102 +148,171 @@ class _AppointmentPageState extends State<AppointmentPage> {
             ],
           ),
           SizedBox(height: screenHeight * 0.02),
-          Expanded(
-              child: ListView.builder(
-            itemCount: filteredSchedules.length,
-            itemBuilder: (((context, index) {
-              var schedule = filteredSchedules[index];
-              bool isLastElement = filteredSchedules.length + 1 == index;
-              return Card(
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                    color: Colors.grey,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: !isLastElement
-                    ? const EdgeInsets.only(bottom: 20)
-                    : EdgeInsets.zero,
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: AssetImage(
-                              schedule['doctor_profile'],
-                            ),
+          StreamBuilder<List<Appointment>>(
+              stream: readAppointment(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong! ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  // get appointments collection from firestore
+                  final appointments = snapshot.data!;
+                  // filter appointments collection by status
+                  List<dynamic> filteredSchedules = appointments
+                      .where((appointment) => appointment.status == status)
+                      .toList();
+
+                  FirebaseFirestore.instance
+                      .collection('appointment')
+                      .doc()
+                      .get();
+                  return Expanded(
+                      child: ListView.builder(
+                    itemCount: filteredSchedules.length,
+                    itemBuilder: (((context, index) {
+                      var schedule = filteredSchedules[index];
+                      bool isLastElement =
+                          filteredSchedules.length + 1 == index;
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            color: Colors.grey,
                           ),
-                          SizedBox(
-                            width: screenWidth * 0.2,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        margin: !isLastElement
+                            ? const EdgeInsets.only(bottom: 20)
+                            : EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text(
-                                schedule['doctor_name'],
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      schedule['image'],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: screenWidth * 0.2,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        schedule['doctor_name'],
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        schedule['category'],
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 15,
                               ),
-                              Text(
-                                schedule['category'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
+                              // const ScheduleCard(),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(20),
+                                child: const Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.calendar_today,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        'Monday, 11/28/2024',
+                                        style: TextStyle(
+                                          color: darkNavyBlueColor,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.access_alarm,
+                                        color: darkNavyBlueColor,
+                                        size: 17,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                        '2:00 PM',
+                                        style:
+                                            TextStyle(color: darkNavyBlueColor),
+                                      ))
+                                    ]),
                               ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                      child: OutlinedButton(
+                                    onPressed: () {},
+                                    child: const Text(
+                                      'Cancel',
+                                      style:
+                                          TextStyle(color: darkNavyBlueColor),
+                                    ),
+                                  )),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                      child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: mediumBlueGrayColor,
+                                    ),
+                                    onPressed: () {},
+                                    child: const Text(
+                                      'Reschedule',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const ScheduleCard(),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              child: OutlinedButton(
-                            onPressed: () {},
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(color: darkNavyBlueColor),
-                            ),
-                          )),
-                          const SizedBox(
-                            width: 20,
                           ),
-                          Expanded(
-                              child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: mediumBlueGrayColor,
-                            ),
-                            onPressed: () {},
-                            child: const Text(
-                              'Reschedule',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
-            })),
-          ))
+                        ),
+                      );
+                    })),
+                  ));
+                }
+                // show loading
+                return const Center(child: CircularProgressIndicator());
+              })
         ],
       ),
     ));
