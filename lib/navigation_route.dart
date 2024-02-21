@@ -73,7 +73,7 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'appointmentbooking',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const BookingPage();
+                  return BookingPage();
                 },
                 routes: <RouteBase>[
                   /// Same as "/a/details", but displayed on the root Navigator by

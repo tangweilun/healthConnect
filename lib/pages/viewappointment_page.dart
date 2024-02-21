@@ -32,7 +32,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
         await _authService.getPatientID(); // Call the method from AuthService
     setState(() {
       patientID = id; // Update the state variable with the retrieved patient ID
-      print(patientID);
     });
   }
 

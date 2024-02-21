@@ -1,32 +1,92 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
-
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class BookingPage extends StatefulWidget {
-  const BookingPage({super.key});
+final bookingStateProvider =
+    StateNotifierProvider<BookingStateNotifier, BookingState>((ref) {
+  return BookingStateNotifier();
+});
 
-  @override
-  State<BookingPage> createState() => _BookingPageState();
+class BookingState {
+  CalendarFormat format;
+  DateTime focusDay;
+  DateTime currentDay;
+  int? currentIndex;
+  bool isWeekend;
+  bool dateSelected;
+  bool timeSelected;
+
+  BookingState({
+    required this.format,
+    required this.focusDay,
+    required this.currentDay,
+    this.currentIndex,
+    this.isWeekend = false,
+    this.dateSelected = false,
+    this.timeSelected = false,
+  });
+
+  BookingState copyWith({
+    CalendarFormat? format,
+    DateTime? focusDay,
+    DateTime? currentDay,
+    int? currentIndex,
+    bool? isWeekend,
+    bool? dateSelected,
+    bool? timeSelected,
+  }) {
+    return BookingState(
+      format: format ?? this.format,
+      focusDay: focusDay ?? this.focusDay,
+      currentDay: currentDay ?? this.currentDay,
+      currentIndex: currentIndex ?? this.currentIndex,
+      isWeekend: isWeekend ?? this.isWeekend,
+      dateSelected: dateSelected ?? this.dateSelected,
+      timeSelected: timeSelected ?? this.timeSelected,
+    );
+  }
 }
 
-class _BookingPageState extends State<BookingPage> {
-  //declaration
-  CalendarFormat _format = CalendarFormat.month;
-  DateTime _focusDay = DateTime.now();
-  DateTime _currentDay = DateTime.now();
-  int? _currentindex;
-  bool _isWeekend = false;
-  bool _dateSelected = false;
-  bool _timeSelected = false;
+class BookingStateNotifier extends StateNotifier<BookingState> {
+  BookingStateNotifier()
+      : super(BookingState(
+          format: CalendarFormat.month,
+          focusDay: DateTime.now(),
+          currentDay: DateTime.now(),
+        ));
+
+  void updateState({
+    CalendarFormat? format,
+    DateTime? focusDay,
+    DateTime? currentDay,
+    int? currentIndex,
+    bool? isWeekend,
+    bool? dateSelected,
+    bool? timeSelected,
+  }) {
+    state = state.copyWith(
+      format: format ?? state.format,
+      focusDay: focusDay ?? state.focusDay,
+      currentDay: currentDay ?? state.currentDay,
+      currentIndex: currentIndex,
+      isWeekend: isWeekend ?? state.isWeekend,
+      dateSelected: dateSelected ?? state.dateSelected,
+      timeSelected: timeSelected ?? state.timeSelected,
+    );
+  }
+}
+
+class BookingPage extends ConsumerWidget {
+  const BookingPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(bookingStateProvider);
+
     return Scaffold(
       appBar: CustomAppBar(
         appTitle: 'Appointment',
@@ -36,7 +96,7 @@ class _BookingPageState extends State<BookingPage> {
         SliverToBoxAdapter(
           child: Column(children: <Widget>[
             //display table calendar here
-            _tableCalendar(),
+            _tableCalendar(ref),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 25),
               child: Center(
@@ -51,7 +111,7 @@ class _BookingPageState extends State<BookingPage> {
             ),
           ]),
         ),
-        _isWeekend
+        state.isWeekend
             ? SliverToBoxAdapter(
                 child: Container(
                   padding:
@@ -73,22 +133,21 @@ class _BookingPageState extends State<BookingPage> {
                     return InkWell(
                       splashColor: Colors.transparent,
                       onTap: () {
-                        setState(() {
-                          //when selected, update current index and st time selected to true
-                          _currentindex = index;
-                          _timeSelected = true;
-                        });
+                        ref.read(bookingStateProvider.notifier).updateState(
+                              currentIndex: index,
+                              timeSelected: true,
+                            );
                       },
                       child: Container(
                         margin: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: _currentindex == index
+                            color: state.currentIndex == index
                                 ? Colors.white
                                 : Colors.black,
                           ),
                           borderRadius: BorderRadius.circular(15),
-                          color: _currentindex == index
+                          color: state.currentIndex == index
                               ? mediumBlueGrayColor
                               : null,
                         ),
@@ -97,7 +156,9 @@ class _BookingPageState extends State<BookingPage> {
                           '${index + 9}:00 ${index + 9 > 11 ? "PM" : "AM"}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: _currentindex == index ? Colors.white : null,
+                            color: state.currentIndex == index
+                                ? Colors.white
+                                : null,
                           ),
                         ),
                       ),
@@ -113,9 +174,9 @@ class _BookingPageState extends State<BookingPage> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 80),
             child: MyButton(
               width: double.infinity,
-              disable: _timeSelected && _dateSelected ? false : true,
+              disable: state.timeSelected && state.dateSelected ? false : true,
               onTap: () {
-                //navigato to the appointment booked page
+                //navigate to the appointment booked page
                 GoRouter.of(context)
                     .go('/doctordetail/appointmentbooking/successbooked');
               },
@@ -127,13 +188,15 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  Widget _tableCalendar() {
+  Widget _tableCalendar(WidgetRef ref) {
+    final state = ref.watch(bookingStateProvider);
+
     return TableCalendar(
-      focusedDay: _focusDay,
+      focusedDay: state.focusDay,
       firstDay: DateTime.now(),
       lastDay: DateTime(2024, 12, 31),
-      calendarFormat: _format,
-      currentDay: _currentDay,
+      calendarFormat: state.format,
+      currentDay: state.currentDay,
       rowHeight: 48,
       calendarStyle: const CalendarStyle(
           todayDecoration: BoxDecoration(
@@ -142,25 +205,17 @@ class _BookingPageState extends State<BookingPage> {
         CalendarFormat.month: "Month",
       },
       onFormatChanged: (format) {
-        setState(() {
-          _format = format;
-        });
+        ref.read(bookingStateProvider.notifier).updateState(format: format);
       },
       onDaySelected: (selectedDay, focusedDay) {
-        setState(() {
-          _currentDay = selectedDay;
-          _focusDay = focusedDay;
-          _dateSelected = true;
-
-          //check if weekend is selected
-          if (selectedDay.weekday == 6 || selectedDay.weekday == 7) {
-            _isWeekend = true;
-            _timeSelected = false;
-            _currentindex = null;
-          } else {
-            _isWeekend = false;
-          }
-        });
+        ref.read(bookingStateProvider.notifier).updateState(
+              currentDay: selectedDay,
+              focusDay: focusedDay,
+              dateSelected: true,
+              isWeekend: selectedDay.weekday == 6 || selectedDay.weekday == 7,
+              timeSelected: false,
+              currentIndex: null,
+            );
       },
     );
   }
