@@ -39,4 +39,39 @@ class AuthService {
       });
     }
   }
+
+  Future<String?> getPatientID() async {
+    try {
+      // Get the currently logged-in user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      // If the user is logged in
+      if (user != null) {
+        // Get a reference to the user's document in Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('patient')
+            .doc(user.uid)
+            .get();
+
+        // Check if the document exists
+        if (userDoc.exists) {
+          // Extract the patientID from the document ID or a specific field
+          String patientId = userDoc.id;
+          return patientId;
+        } else {
+          // Handle case where user document does not exist
+          print('Handle case where user document does not exist');
+          return null;
+        }
+      } else {
+        // Handle case where no user is logged in
+        print(' Handle case where no user is logged in');
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors that occur during the process
+      print('Error getting patient ID: $e');
+      return null;
+    }
+  }
 }
