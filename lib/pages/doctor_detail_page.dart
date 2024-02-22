@@ -6,6 +6,7 @@ import 'package:health_connect/components/my_button.dart';
 
 import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
+import 'package:health_connect/providers/reschedule_provider.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class DoctorDetails extends ConsumerWidget {
@@ -139,6 +140,10 @@ class DoctorDetails extends ConsumerWidget {
                             width: double.infinity,
                             disable: false,
                             onTap: () {
+                              //is creating appointment
+                              ref
+                                  .read(rescheduleProvider.notifier)
+                                  .update((state) => false);
                               //navigate to booking appointment page
                               GoRouter.of(context)
                                   .go('/doctordetail/appointmentbooking');

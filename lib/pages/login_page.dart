@@ -134,9 +134,15 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.grey[600]),
+                      GestureDetector(
+                        onTap: () {
+                          // navigate to forgot password
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 20),
+                        ),
                       ),
                     ],
                   ),
@@ -164,31 +170,31 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text('Or Continue with'),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    //   child: Text('Or Continue with'),
+                    // ),
+                    // Expanded(
+                    //   child: Divider(
+                    //     thickness: 0.5,
+                    //     color: Colors.grey[400],
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 //google button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(
-                        onTap: () => AuthService().signInWithGoogle(),
-                        imagePath: 'assets/images/google_logo.png'),
-                    SizedBox(
-                      width: screenWidth * 0.05,
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SquareTile(
+                //         onTap: () => AuthService().signInWithGoogle(),
+                //         imagePath: 'assets/images/google_logo.png'),
+                //     SizedBox(
+                //       width: screenWidth * 0.05,
+                //     ),
+                //   ],
+                // ),
                 SizedBox(height: screenHeight * 0.02),
                 //not a member? register now
                 Row(

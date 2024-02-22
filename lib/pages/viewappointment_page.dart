@@ -1,10 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/models/appointment_model.dart';
+import 'package:health_connect/models/doctor_model.dart';
+import 'package:health_connect/providers/doctor_provider.dart';
+import 'package:health_connect/providers/reschedule_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:intl/intl.dart';
+
+class MyConsumerWidget extends ConsumerWidget {
+  final Doctor doctor;
+  final String appointmentID;
+  MyConsumerWidget({
+    Key? key,
+    required this.doctor,
+    required this.appointmentID,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Expanded(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: mediumBlueGrayColor,
+        ),
+        onPressed: () {
+          ref.read(selectedDoctorProvider.notifier).updateDoctorModel(
+                doctor.name,
+                doctor.category,
+                doctor.experience,
+                doctor.rating,
+                doctor.image,
+                doctor.description,
+              );
+
+          ref
+              .read(appointmentIDProvider.notifier)
+              .update((state) => appointmentID);
+
+          ref.read(rescheduleProvider.notifier).update((state) => true);
+          GoRouter.of(context).go('/doctordetail/appointmentbooking');
+        },
+        child: const Text(
+          'Reschedule',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
 
 class AppointmentPage extends StatefulWidget {
   const AppointmentPage({super.key});
@@ -13,13 +58,13 @@ class AppointmentPage extends StatefulWidget {
   State<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-enum FilterStatus { upcoming, complete, cancel }
+enum FilterStatus { pending, upcoming, cancel }
 
 class _AppointmentPageState extends State<AppointmentPage> {
   final AuthService _authService =
       AuthService(); // Create an instance of AuthService
   String? patientID; // Variable to hold the patient ID
-  FilterStatus status = FilterStatus.upcoming;
+  FilterStatus status = FilterStatus.pending;
   Alignment _alignment = Alignment.centerLeft;
 
   @override
@@ -57,7 +102,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const Text(
-            'Apointment Schedule',
+            'Appointment Schedule',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: mediumBlueGrayColor,
@@ -82,12 +127,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              if (filterStatus == FilterStatus.upcoming) {
-                                status = FilterStatus.upcoming;
+                              if (filterStatus == FilterStatus.pending) {
+                                status = FilterStatus.pending;
                                 _alignment = Alignment.centerLeft;
                               } else if (filterStatus ==
-                                  FilterStatus.complete) {
-                                status = FilterStatus.complete;
+                                  FilterStatus.upcoming) {
+                                status = FilterStatus.upcoming;
                                 _alignment = Alignment.center;
                               } else if (filterStatus == FilterStatus.cancel) {
                                 status = FilterStatus.cancel;
@@ -146,14 +191,14 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       case 'upcoming':
                         filterStatus = FilterStatus.upcoming;
                         break;
-                      case 'complete':
-                        filterStatus = FilterStatus.complete;
+                      case 'pending':
+                        filterStatus = FilterStatus.pending;
                         break;
                       case 'cancel':
                         filterStatus = FilterStatus.cancel;
                         break;
                       default:
-                        filterStatus = FilterStatus.upcoming;
+                        filterStatus = FilterStatus.pending;
                     }
                     // Check if the appointment is for the specified patient
                     bool patientMatches = appointment.patientID == patientID;
@@ -172,14 +217,14 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     case FilterStatus.upcoming:
                       statusMessage = 'upcoming';
                       break;
-                    case FilterStatus.complete:
-                      statusMessage = 'complete';
+                    case FilterStatus.pending:
+                      statusMessage = 'pending';
                       break;
                     case FilterStatus.cancel:
                       statusMessage = 'cancelled';
                       break;
                     default:
-                      statusMessage = 'upcoming';
+                      statusMessage = 'pending';
                   }
                   return Expanded(
                       child: filteredAppointments.isEmpty
@@ -322,7 +367,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            if (schedule.status == 'upcoming')
+                                            if (schedule.status != 'cancel')
                                               Expanded(
                                                 child: OutlinedButton(
                                                   onPressed: () {
@@ -346,25 +391,34 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                 ),
                                               ),
                                             const SizedBox(width: 20),
-                                            Expanded(
-                                              child: OutlinedButton(
-                                                style: OutlinedButton.styleFrom(
-                                                  backgroundColor:
-                                                      mediumBlueGrayColor,
-                                                ),
-                                                onPressed: () {
-                                                  // Reschedule functionality here
-                                                  //navigate to booking appointment page
-                                                  GoRouter.of(context).go(
-                                                      '/doctordetail/appointmentbooking');
-                                                },
-                                                child: const Text(
-                                                  'Reschedule',
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
+                                            MyConsumerWidget(
+                                              appointmentID: schedule.id,
+                                              doctor: Doctor(
+                                                  id: schedule.doctorID,
+                                                  name: schedule.doctorName,
+                                                  category: schedule.category,
+                                                  image: schedule.image,
+                                                  experience: '',
+                                                  rating: '',
+                                                  description: ''),
                                             ),
+                                            // child: OutlinedButton(
+                                            //   style: OutlinedButton.styleFrom(
+                                            //     backgroundColor:
+                                            //         mediumBlueGrayColor,
+                                            //   ),
+                                            //   onPressed: () {
+                                            //     // Reschedule functionality here
+                                            //     //navigate to booking appointment page
+                                            //     GoRouter.of(context).go(
+                                            //         '/doctordetail/appointmentbooking');
+                                            //   },
+                                            //   child: const Text(
+                                            //     'Reschedule',
+                                            //     style: TextStyle(
+                                            //         color: Colors.white),
+                                            //   ),
+                                            // ),
                                           ],
                                         )
                                       ],
