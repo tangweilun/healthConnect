@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/components/square_tile.dart';
-import 'package:health_connect/services/auth_services.dart';
+// import 'package:health_connect/components/square_tile.dart';
+// import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:lottie/lottie.dart';
 
@@ -26,6 +26,8 @@ class _LoginPageState extends State<LoginPage> {
 
   final passwordController = TextEditingController();
 
+  bool isEmailFieldEmpty = true; // Initially, consider the field as empty
+  bool isPasswordFieldEmpty = true; // Initially, consider the field as empty
   void signUserIn() async {
     // Check if the widget is still mounted
     if (!mounted) return;
@@ -95,26 +97,24 @@ class _LoginPageState extends State<LoginPage> {
                     height: 200,
                     width: 200,
                     child: Lottie.asset('assets/doctor_animation.json')),
-                // Image.asset(
-                //   'assets/images/bpm_helthcare.jpg',
-                //   height: screenWidth / 3,
-                //   width: screenHeight / 3,
-                // ),
-                //welcome back
-                // SizedBox(
-                //   height: screenHeight * 0.03,
-                // ),
+
                 Text('Welcome back ',
                     style: GoogleFonts.roboto(
                         color: mediumBlueGrayColor, fontSize: 24)),
                 SizedBox(
                   height: screenHeight * 0.03,
                 ),
-                //username
+                //email
                 MyTextField(
                   controller: emailController,
                   hintText: 'Email',
-                  obsureText: false,
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isEmailFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -123,7 +123,13 @@ class _LoginPageState extends State<LoginPage> {
                 MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
-                  obsureText: true,
+                  obscureText: true,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isPasswordFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -141,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'Forgot Password?',
                           style:
-                              TextStyle(color: Colors.grey[600], fontSize: 20),
+                              TextStyle(color: Colors.grey[600], fontSize: 16),
                         ),
                       ),
                     ],
@@ -152,10 +158,8 @@ class _LoginPageState extends State<LoginPage> {
                   height: screenHeight * 0.03,
                 ),
                 MyButton(
-                  disable: emailController.text.isEmpty &&
-                          passwordController.text.isEmpty
-                      ? false
-                      : true,
+                  disable: emailController.text.isEmpty ||
+                      passwordController.text.isEmpty,
                   width: screenWidth * 0.5,
                   text: "Sign In",
                   onTap: signUserIn,
@@ -212,7 +216,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         'Register now',
                         style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

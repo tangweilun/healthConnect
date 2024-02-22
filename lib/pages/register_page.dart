@@ -19,7 +19,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
+  final phoneNumberController = TextEditingController();
 
+  bool isEmailFieldEmpty = true; // Initially, consider the field as empty
+  bool isPasswordFieldEmpty = true; // Initially, consider the field as empty
+  bool isconfirmFieldEmpty = true; // Initially, consider the field as empty
+  bool isFullNameFieldEmpty = true; // Initially, consider the field as empty
+  bool isDateOfBirthFieldEmpty = true; // Initially, consider the field as empty
+  bool isPhoneNumberFieldEmpty = true; // Initially, consider the field as empty
   void signUserIn() async {
     //show loading circle
     showDialog(
@@ -71,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: screenHeight * 0.05,
                 ),
                 //logo
                 Image.asset(
@@ -81,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 //welcome back
                 SizedBox(
-                  height: screenHeight * 0.05,
+                  height: screenHeight * 0.02,
                 ),
                 Text(
                   'Let\'s create an account for you!',
@@ -89,13 +98,67 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: darkNavyBlueColor, fontSize: 16),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.03,
+                  height: screenHeight * 0.01,
                 ),
+
                 //username
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                MyTextField(
+                  controller: fullNameController,
+                  hintText: 'Full Name',
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isFullNameFieldEmpty = newText.isEmpty;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                //textfield
+                MyTextField(
+                  controller: dateOfBirthController,
+                  hintText: 'Date Of Birth',
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isDateOfBirthFieldEmpty = newText.isEmpty;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                MyTextField(
+                  controller: phoneNumberController,
+                  hintText: 'Phone Number',
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isPhoneNumberFieldEmpty = newText.isEmpty;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                //
                 MyTextField(
                   controller: emailController,
                   hintText: 'Email',
-                  obsureText: false,
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isEmailFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -104,7 +167,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
-                  obsureText: true,
+                  obscureText: true,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isPasswordFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -113,23 +182,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 MyTextField(
                   controller: confirmPasswordController,
                   hintText: 'Confirm Password',
-                  obsureText: true,
-                ),
-                SizedBox(
-                  height: screenHeight * 0.02,
+                  obscureText: true,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isconfirmFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
 
                 //sign in button
                 SizedBox(
-                  height: screenHeight * 0.03,
+                  height: screenHeight * 0.02,
                 ),
 
                 MyButton(
-                  disable: emailController.text.isEmpty &&
-                          passwordController.text.isEmpty &&
-                          confirmPasswordController.text.isEmpty
-                      ? false
-                      : true,
+                  disable: emailController.text.isEmpty ||
+                      passwordController.text.isEmpty ||
+                      confirmPasswordController.text.isEmpty ||
+                      fullNameController.text.isEmpty ||
+                      dateOfBirthController.text.isEmpty ||
+                      phoneNumberController.text.isEmpty,
                   width: screenWidth * 0.5,
                   text: "Register",
                   onTap: signUserIn,
@@ -144,32 +217,32 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text('Or Continue with'),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    //   child: Text('Or Continue with'),
+                    // ),
+                    // Expanded(
+                    //   child: Divider(
+                    //     thickness: 0.5,
+                    //     color: Colors.grey[400],
+                    //   ),
+                    // ),
                   ],
                 ),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.01),
                 //google button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(
-                        onTap: () => AuthService().signInWithGoogle(),
-                        imagePath: 'assets/images/google_logo.png'),
-                    SizedBox(
-                      width: screenWidth * 0.05,
-                    ),
-                  ],
-                ),
-                SizedBox(height: screenHeight * 0.02),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SquareTile(
+                //         onTap: () => AuthService().signInWithGoogle(),
+                //         imagePath: 'assets/images/google_logo.png'),
+                //     SizedBox(
+                //       width: screenWidth * 0.05,
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(height: screenHeight * 0.01),
                 //not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -186,7 +259,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: const Text(
                         'Login now',
                         style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
