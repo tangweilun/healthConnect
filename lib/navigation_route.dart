@@ -48,7 +48,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/viewappointment',
             builder: (BuildContext context, GoRouterState state) {
-              return AppointmentPage();
+              return const AppointmentPage();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -65,7 +65,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/doctordetail',
             builder: (BuildContext context, GoRouterState state) {
-              return DoctorDetails();
+              return const DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -83,7 +83,7 @@ class NavigationRoute extends StatelessWidget {
                     path: 'successbooked',
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (BuildContext context, GoRouterState state) {
-                      return AppointmentBooked();
+                      return const AppointmentBooked();
                     },
                   ),
                 ],
@@ -116,7 +116,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/c',
             builder: (BuildContext context, GoRouterState state) {
-              return DoctorDetails();
+              return const DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.

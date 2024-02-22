@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: screenHeight * 0.1,
                 ),
-                Container(
+                SizedBox(
                     height: 200,
                     width: 200,
                     child: Lottie.asset('assets/doctor_animation.json')),

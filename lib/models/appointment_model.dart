@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
-  final String id;
+  String id;
   final String patientID;
   final String doctorID;
   final DateTime date;
@@ -12,7 +12,7 @@ class Appointment {
   final String patientName;
 
   Appointment({
-    required this.id,
+    this.id = '',
     required this.patientID,
     required this.doctorID,
     required this.date,
@@ -29,7 +29,7 @@ class Appointment {
       'id': id,
       'patientID': patientID,
       'doctorID': doctorID,
-      'date': date.toIso8601String(),
+      'date': date,
       // Convert DateTime to ISO 8601 format
       'status': status,
       'category': category,
@@ -38,21 +38,6 @@ class Appointment {
       'patientName': patientName,
     };
   }
-
-  // Create an Appointment object from a Map
-  // factory Appointment.fromJson(Map<String, dynamic> json) {
-  //   return Appointment(
-  //     id: json['id'],
-  //     patientId: json['patientId'],
-  //     doctorId: json['doctorId'],
-  //     date: DateTime.parse(json['date']), // Parse ISO 8601 string to DateTime
-  //     status: json['status'],
-  //     category: json['catgory'],
-  //     doctorName: json['doctorName'],
-  //     image: json['image'],
-  //     patientName: json['patientName'],
-  //   );
-  // }
 
   factory Appointment.fromJson(Map<String, dynamic> json, String id) {
     return Appointment(

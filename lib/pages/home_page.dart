@@ -97,8 +97,15 @@ class HomePage extends ConsumerWidget {
     // double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
-          IconButton(onPressed: signUserOut, icon: const Icon(Icons.logout))
+          IconButton(
+              onPressed: signUserOut,
+              icon: const Icon(
+                Icons.logout,
+                color: mediumBlueGrayColor,
+              ))
         ],
       ),
       body: Padding(

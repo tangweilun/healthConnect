@@ -22,8 +22,9 @@ class MyButton extends StatelessWidget {
       onTap: disable ? null : onTap,
       child: Container(
         width: width,
-        padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding here
-        margin: EdgeInsets.symmetric(horizontal: 25),
+        padding:
+            const EdgeInsets.symmetric(vertical: 12), // Adjust padding here
+        margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
           color: buttonColor,
           borderRadius: BorderRadius.circular(8),
@@ -31,7 +32,7 @@ class MyButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 14, // Adjust font size here
               fontWeight: FontWeight.bold,

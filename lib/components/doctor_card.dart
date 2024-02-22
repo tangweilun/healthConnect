@@ -53,7 +53,7 @@ class _DoctorCardState extends State<DoctorCard> {
                         fontWeight: FontWeight.normal,
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[

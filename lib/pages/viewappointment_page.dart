@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_connect/models/appointment_model.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
@@ -49,20 +50,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    // List<dynamic> filteredSchedules = schedules.where((var schedule) {
-    //   switch (schedule['status']) {
-    //     case 'upcoming':
-    //       schedule['status'] = FilterStatus.upcoming;
-    //       break;
-    //     case 'complete':
-    //       schedule['status'] = FilterStatus.complete;
-    //       break;
-    //     case 'cancel':
-    //       schedule['status'] = FilterStatus.cancel;
-    //       break;
-    //   }
-    //   return schedule['status'] == status;
-    // }).toList();
     return SafeArea(
         child: Padding(
       padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
@@ -199,7 +186,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           ? Center(
                               child: Text(
                                 'No $statusMessage appointments available. Please make an appointment.',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold,
@@ -212,6 +199,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               itemBuilder: (((context, index) {
                                 // var schedule = filteredSchedules[index];
                                 var schedule = filteredAppointments[index];
+
                                 // bool isLastElement =
                                 //     filteredSchedules.length + 1 == index;
                                 bool isLastElement =
@@ -329,35 +317,54 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                         const SizedBox(
                                           height: 15,
                                         ),
+
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Expanded(
+                                            if (schedule.status == 'upcoming')
+                                              Expanded(
                                                 child: OutlinedButton(
-                                              onPressed: () {},
-                                              child: const Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                    color: darkNavyBlueColor),
+                                                  onPressed: () {
+                                                    final docAppointment =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'appointment')
+                                                            .doc(schedule.id);
+
+                                                    docAppointment.update({
+                                                      'status': 'cancel',
+                                                    });
+                                                  },
+                                                  child: const Text(
+                                                    'Cancel',
+                                                    style: TextStyle(
+                                                        color:
+                                                            darkNavyBlueColor),
+                                                  ),
+                                                ),
                                               ),
-                                            )),
-                                            const SizedBox(
-                                              width: 20,
+                                            const SizedBox(width: 20),
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                  backgroundColor:
+                                                      mediumBlueGrayColor,
+                                                ),
+                                                onPressed: () {
+                                                  // Reschedule functionality here
+                                                  //navigate to booking appointment page
+                                                  GoRouter.of(context).go(
+                                                      '/doctordetail/appointmentbooking');
+                                                },
+                                                child: const Text(
+                                                  'Reschedule',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
                                             ),
-                                            Expanded(
-                                                child: OutlinedButton(
-                                              style: OutlinedButton.styleFrom(
-                                                backgroundColor:
-                                                    mediumBlueGrayColor,
-                                              ),
-                                              onPressed: () {},
-                                              child: const Text(
-                                                'Reschedule',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                            )),
                                           ],
                                         )
                                       ],
