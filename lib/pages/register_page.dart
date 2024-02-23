@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +30,9 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isFullNameFieldEmpty = true; // Initially, consider the field as empty
   bool isDateOfBirthFieldEmpty = true; // Initially, consider the field as empty
   bool isPhoneNumberFieldEmpty = true; // Initially, consider the field as empty
+  final CollectionReference patient =
+      FirebaseFirestore.instance.collection('patient');
+  final IDGenerator idGenerator = IDGenerator();
   void signUserIn() async {
     //show loading circle
     showDialog(
@@ -43,13 +47,25 @@ class _RegisterPageState extends State<RegisterPage> {
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
+
+        // Get the user's unique ID after registration
+        String userId = FirebaseAuth.instance.currentUser.uid;
+
+        // Add patient information to Firestore database
+        await FirebaseFirestore.instance
+            .collection('patients')
+            .doc(userId)
+            .set({
+          'email': emailController.text,
+
+          // Add more fields as needed
+        });
       } else {
         showErrorMessage("password not match!");
       }
-      // ignore: use_build_context_synchronously
+
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      // ignore: use_build_context_synchronously
       Navigator.pop(context);
       showErrorMessage(e.code);
     }

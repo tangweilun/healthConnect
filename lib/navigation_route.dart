@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_connect/pages/forgot_password_page.dart';
+import 'package:health_connect/pages/login_page.dart';
 import 'package:health_connect/pages/viewappointment_page.dart';
 import 'package:health_connect/pages/booking_page.dart';
 import 'package:health_connect/pages/doctor_detail_page.dart';
@@ -57,6 +59,23 @@ class NavigationRoute extends StatelessWidget {
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
                   return const AppointmentPage();
+                },
+              ),
+            ],
+          ),
+
+          GoRoute(
+            path: '/loginpage',
+            builder: (BuildContext context, GoRouterState state) {
+              return const LoginPage();
+            },
+            routes: <RouteBase>[
+              // The details screen to display stacked on the inner Navigator.
+              // This will cover screen A but not the application shell.
+              GoRoute(
+                path: 'forgotpasswordpage',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const ForgotPasswordPage();
                 },
               ),
             ],

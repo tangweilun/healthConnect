@@ -103,6 +103,7 @@ Future rescheduleAppointment(
 
   docAppointment.update({
     'date': newSelectedDateTime,
+    'status': 'pending',
   });
 }
 

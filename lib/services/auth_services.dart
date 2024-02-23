@@ -3,26 +3,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  //google sign in
-  signInWithGoogle() async {
-    //begin interaction sign in process
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-    // obtain auth details from request
-    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+  // //google sign in
+  // signInWithGoogle() async {
+  //   //begin interaction sign in process
+  //   final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+  //   // obtain auth details from request
+  //   final GoogleSignInAuthentication gAuth = await gUser!.authentication;
 
-    //create a new credential for user
-    final credential = GoogleAuthProvider.credential(
-      accessToken: gAuth.accessToken,
-      idToken: gAuth.idToken,
-    );
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    // Add user to Firestore
-    await addUserToFirestore(userCredential.user!);
+  //   //create a new credential for user
+  //   final credential = GoogleAuthProvider.credential(
+  //     accessToken: gAuth.accessToken,
+  //     idToken: gAuth.idToken,
+  //   );
+  //   UserCredential userCredential =
+  //       await FirebaseAuth.instance.signInWithCredential(credential);
+  //   // Add user to Firestore
+  //   await addUserToFirestore(userCredential.user!);
 
-    // finally, leys sign in
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
+  //   // finally, leys sign in
+  //   return await FirebaseAuth.instance.signInWithCredential(credential);
+  // }
 
   Future<void> addUserToFirestore(User user) async {
     // Reference to Firestore collection (you may need to change 'users' to your collection name)

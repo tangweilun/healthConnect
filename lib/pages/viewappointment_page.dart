@@ -402,23 +402,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   rating: '',
                                                   description: ''),
                                             ),
-                                            // child: OutlinedButton(
-                                            //   style: OutlinedButton.styleFrom(
-                                            //     backgroundColor:
-                                            //         mediumBlueGrayColor,
-                                            //   ),
-                                            //   onPressed: () {
-                                            //     // Reschedule functionality here
-                                            //     //navigate to booking appointment page
-                                            //     GoRouter.of(context).go(
-                                            //         '/doctordetail/appointmentbooking');
-                                            //   },
-                                            //   child: const Text(
-                                            //     'Reschedule',
-                                            //     style: TextStyle(
-                                            //         color: Colors.white),
-                                            //   ),
-                                            // ),
                                           ],
                                         )
                                       ],

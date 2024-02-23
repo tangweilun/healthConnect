@@ -26,12 +26,12 @@ class DoctorDetails extends ConsumerWidget {
         icon: const Icon(Icons.arrow_back_ios),
         actions: [
           //Favourite button
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                isFav ? Icons.favorite_outline_rounded : Icons.favorite_outline,
-                color: Colors.red,
-              ))
+          // IconButton(
+          //     onPressed: () {},
+          //     icon: Icon(
+          //       isFav ? Icons.favorite_outline_rounded : Icons.favorite_outline,
+          //       color: Colors.red,
+          //     ))
         ],
       ),
       body: SafeArea(

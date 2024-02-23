@@ -1,12 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/my_textfield.dart';
-// import 'package:health_connect/components/square_tile.dart';
-// import 'package:health_connect/services/auth_services.dart';
+import 'package:health_connect/pages/forgot_password_page.dart';
+
 import 'package:health_connect/theme/colors.dart';
 import 'package:lottie/lottie.dart';
 
@@ -46,22 +47,20 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text,
       );
 
-      // Navigator.pop(context);
       // Check if the widget is still mounted before updating the UI
-      if (mounted) {
-        Navigator.pop(context);
-      }
+
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       // Check if the widget is still mounted before updating the UI
-      if (mounted) {
-        Navigator.pop(context);
-      }
 
-      // Navigator.pop(context);
+      Navigator.pop(context);
+
       if (e.code == 'user-not-found') {
         showErrorMessage("Wrong Email"); // Pass the context here
       } else if (e.code == 'wrong-password') {
         showErrorMessage("Wrong Password"); // Pass the context here
+      } else {
+        showErrorMessage('please enter valid email');
       }
     }
   }
@@ -143,11 +142,17 @@ class _LoginPageState extends State<LoginPage> {
                       GestureDetector(
                         onTap: () {
                           // navigate to forgot password
+                          // Navigate to forgot password screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ForgotPasswordPage()),
+                          );
                         },
-                        child: Text(
+                        child: const Text(
                           'Forgot Password?',
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 16),
+                          style: TextStyle(
+                              color: mediumBlueGrayColor, fontSize: 16),
                         ),
                       ),
                     ],
