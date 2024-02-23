@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-var darkNavyBlueColor = const Color.fromARGB(255, 6, 22, 73);
-var deepBlueColor = const Color.fromARGB(255, 6, 22, 73);
-var mediumBlueGrayColor = const Color.fromARGB(255, 55, 141, 169);
-var grayColor = const Color.fromARGB(255, 218, 222, 230);
+class AppColors {
+  static final Color darkNavyBlue = Color.fromARGB(255, 6, 22, 73);
+  static final Color deepBlue = Color.fromARGB(255, 0, 0, 139);
+  static final Color blueGray = Color.fromARGB(255, 154, 208, 194);
+  static final Color paleGrey = Color.fromARGB(255, 241, 250, 218);
+}
