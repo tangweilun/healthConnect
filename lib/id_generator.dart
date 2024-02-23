@@ -18,10 +18,13 @@ class IDGenerator {
       }
 
       // Extract the data from the document
-      Map<String, dynamic> data = idDocSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> data =
+      idDocSnapshot.data() as Map<String, dynamic>;
 
       // Check if data is null or userType is not present in the data
-      if (data == null || !data.containsKey(userType) || data[userType] is! int) {
+      if (data == null ||
+          !data.containsKey(userType) ||
+          data[userType] is! int) {
         throw Exception('Invalid or missing data for user type: $userType');
       }
 
@@ -48,9 +51,10 @@ class IDGenerator {
   // Helper function to get the prefix for a given user type
   String _getIdPrefix(String userType) {
     const Map<String, String> idPrefixes = {
-      'patient': 'P',
       'doctor': 'D',
+      'patient': 'P',
       'manager': 'M',
+      'appointment': 'AP',
     };
 
     // Return the prefix if it exists, or an empty string if not
