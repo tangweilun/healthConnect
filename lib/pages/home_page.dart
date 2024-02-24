@@ -11,16 +11,6 @@ import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
-// enum FilterCategory {
-//   General,
-//   Cardiology,
-//   Resporations,
-//   Dermatology,
-//   Gynecology,
-//   Dental,
-//   All
-// }
-
 class PatientNameWidget extends StatefulWidget {
   const PatientNameWidget({super.key});
 
@@ -60,33 +50,6 @@ class _PatientNameWidgetState extends State<PatientNameWidget> {
   }
 }
 
-List<Map<String, dynamic>> medCat = [
-  {
-    "icon": FontAwesomeIcons.userDoctor,
-    "category": "General",
-  },
-  {
-    "icon": FontAwesomeIcons.heartPulse,
-    "category": "Cardiology",
-  },
-  {
-    "icon": FontAwesomeIcons.lungs,
-    "category": "Resporations",
-  },
-  {
-    "icon": FontAwesomeIcons.hand,
-    "category": "Dermatology",
-  },
-  {
-    "icon": FontAwesomeIcons.personPregnant,
-    "category": "Gynecology",
-  },
-  {
-    "icon": FontAwesomeIcons.teeth,
-    "category": "Dental",
-  },
-];
-
 class HomePage extends ConsumerWidget {
   HomePage({super.key});
 
@@ -107,19 +70,6 @@ class HomePage extends ConsumerWidget {
         .snapshots()
         .map((snapshot) =>
             snapshot.docs.map((doc) => Doctor.fromJson(doc.data())).toList());
-
-    // Stream<List<Doctor>> readDoctorByCategory(FilterCategory filterCategory) =>
-    //     FirebaseFirestore.instance
-    //         .collection('doctor')
-    //         .where('category',
-    //             isEqualTo: filterCategory
-    //                 .toString()
-    //                 .split('.')
-    //                 .last) // Assuming 'category' is a field in the documents
-    //         .snapshots()
-    //         .map((snapshot) => snapshot.docs
-    //             .map((doc) => Doctor.fromJson(doc.data()))
-    //             .toList());
 
     //build doctor
     Widget buildDoctor(Doctor doctor) => GestureDetector(
@@ -183,7 +133,6 @@ class HomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 PatientNameWidget(),
-                ////////////////////////////////////////////////////////////////////////////////
 
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -235,7 +184,7 @@ class HomePage extends ConsumerWidget {
                   height: screenHeight * 0.02,
                 ),
                 const Text(
-                  'Category',
+                  'Departments',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -244,7 +193,55 @@ class HomePage extends ConsumerWidget {
                 SizedBox(
                   height: screenHeight * 0.01,
                 ),
-                CategoryCard(),
+                StreamBuilder(
+                  stream: readDoctor(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong! ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      var doctors = snapshot.data!;
+                      List<String> departmentList = doctors
+                          .map((doctor) => doctor.department)
+                          .toSet()
+                          .toList();
+                      //display department
+                      return SizedBox(
+                        height: screenHeight * 0.06,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: List<Widget>.generate(departmentList.length,
+                              (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                ref.read(searchNameProvider.notifier).state =
+                                    departmentList[index];
+                                ref
+                                    .read(isfilteredByDepartment.notifier)
+                                    .state = true;
+                              },
+                              child: Card(
+                                margin: const EdgeInsets.only(right: 16),
+                                color: mediumBlueGrayColor,
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    child: Text(
+                                      departmentList[index],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    )),
+                              ),
+                            );
+                          }),
+                        ),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
 
                 const SizedBox(
                   height: 14,
@@ -262,41 +259,26 @@ class HomePage extends ConsumerWidget {
                   height: 14,
                 ),
                 StreamBuilder(
-                  //   stream: filterCategory == FilterCategory.All
-                  //       ? readDoctor()
-                  //       : readDoctorByCategory(filterCategory),
                   stream: readDoctor(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Something went wrong! ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       var doctors = snapshot.data!;
-                      // ref
-                      //     .read(doctorListProvider.notifier)
-                      //     .update((state) => doctors);
-                      // // List<dynamic> filteredDoctors = doctors.where((doctor) {
-                      //   String doctorCategory = doctor.category;
-                      //   switch (filterCategory) {
-                      //     case FilterCategory.All:
-                      //       return true;
-                      //     case FilterCategory.General:
-                      //       return doctorCategory == 'General';
-                      //     case FilterCategory.Cardiology:
-                      //       return doctorCategory == 'Cardiology';
-                      //     case FilterCategory.Resporations:
-                      //       return doctorCategory == 'Resporations';
-                      //     case FilterCategory.Dermatology:
-                      //       return doctorCategory == 'Dermatology';
-                      //     case FilterCategory.Gynecology:
-                      //       return doctorCategory == 'Gynecology';
-                      //     case FilterCategory.Dental:
-                      //       return doctorCategory == 'Dental';
-                      //     default:
-                      //       return true;
-                      //   }
-                      // }).toList();
+                      List<String> departmentList = doctors
+                          .map((doctor) => doctor.department)
+                          .toSet()
+                          .toList();
                       String searchName = ref.watch(searchNameProvider);
-                      if (searchName.isNotEmpty) {
+
+                      if (searchName.isNotEmpty &&
+                          ref.watch(isfilteredByDepartment)) {
+                        doctors = doctors
+                            .where((doctor) => doctor.department
+                                .toLowerCase()
+                                .contains(searchName.toLowerCase()))
+                            .toList();
+                      } else if (searchName.isNotEmpty) {
                         doctors = doctors
                             .where((doctor) => doctor.name
                                 .toLowerCase()
@@ -304,6 +286,26 @@ class HomePage extends ConsumerWidget {
                             .toList();
                       }
 
+                      if (doctors.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.all(
+                              16.0), // Add padding for better visual appeal
+                          decoration: BoxDecoration(
+                            color: Colors.grey[
+                                200], // Change the background color to a light grey
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Add rounded corners to the container
+                          ),
+                          child: Text(
+                            "Opps, no doctor found. Try another name",
+                            style: TextStyle(
+                                fontSize: 24,
+                                color:
+                                    Colors.grey[600]), // Adjust the text color
+                          ),
+                        );
+                      }
+                      // display doctor
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -343,99 +345,6 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// FilterCategory filterCategory = FilterCategory.All;
-
-class CategoryCard extends StatefulWidget {
-  const CategoryCard({super.key});
-
-  @override
-  State<CategoryCard> createState() => _CategoryCardState();
-}
-
-class _CategoryCardState extends State<CategoryCard> {
-  @override
-  Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    return SizedBox(
-      height: screenHeight * 0.06,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: List<Widget>.generate(medCat.length, (index) {
-          return GestureDetector(
-            onTap: () {
-              // switch (medCat[index]['category']) {
-              //   case 'General':
-              //     setState(() {
-              //       filterCategory = FilterCategory.General;
-              //     });
-
-              //     break;
-              //   case 'Cardiology':
-              //     setState(() {
-              //       filterCategory = FilterCategory.Cardiology;
-              //     });
-
-              //     break;
-              //   case 'Resporations':
-              //     setState(() {
-              //       filterCategory = FilterCategory.Resporations;
-              //     });
-              //     break;
-
-              //   case 'Dermatology':
-              //     setState(() {
-              //       filterCategory = FilterCategory.Dermatology;
-              //     });
-              //     break;
-              //   case 'Gynecology':
-              //     setState(() {
-              //       filterCategory = FilterCategory.Gynecology;
-              //     });
-              //     break;
-              //   case 'Dental':
-              //     setState(() {
-              //       filterCategory = FilterCategory.Dental;
-              //     });
-              //     break;
-              //   default:
-              //     filterCategory = FilterCategory.All;
-              // }
-              // print(filterCategory.toString().split('.').last);
-            },
-            child: Card(
-              margin: const EdgeInsets.only(right: 16),
-              color: mediumBlueGrayColor,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Icon(
-                      medCat[index]['icon'],
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      medCat[index]['category'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
       ),
     );
   }

@@ -17,3 +17,6 @@ class DoctorModelNotifier extends StateNotifier<Doctor> {
 
 // Define a provider for the list
 final searchNameProvider = StateProvider<String>((ref) => '');
+
+// Define a provider for the list
+final isfilteredByDepartment = StateProvider<bool>((ref) => false);
