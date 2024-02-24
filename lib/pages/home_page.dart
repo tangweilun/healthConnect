@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +8,7 @@ import 'package:health_connect/components/appointment_card.dart';
 
 import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
+import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
 // enum FilterCategory {
@@ -21,6 +20,45 @@ import 'package:health_connect/theme/colors.dart';
 //   Dental,
 //   All
 // }
+
+class PatientNameWidget extends StatefulWidget {
+  const PatientNameWidget({super.key});
+
+  @override
+  State<PatientNameWidget> createState() => _PatientNameWidgetState();
+}
+
+class _PatientNameWidgetState extends State<PatientNameWidget> {
+  String patientName = '';
+  @override
+  void initState() {
+    super
+        .initState(); // Call the method to retrieve the patient ID when the screen initializes
+    _getPatientName();
+  }
+
+  final AuthService _authService =
+      AuthService(); // Create an instance of AuthService
+  Future<void> _getPatientName() async {
+    String? name =
+        await _authService.getPatientName(); // Call the method from AuthService
+    setState(() {
+      patientName =
+          name ?? ''; // Update the state variable with the retrieved patient ID
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Welcome $patientName',
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
 
 List<Map<String, dynamic>> medCat = [
   {
@@ -56,6 +94,10 @@ class HomePage extends ConsumerWidget {
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
+
+  //function that will filter doctor list
+  //for searching
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -106,7 +148,7 @@ class HomePage extends ConsumerWidget {
             ),
             subtitle: Text(
               "${doctor.speciality} in ${doctor.department} Department",
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
@@ -140,25 +182,7 @@ class HomePage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // const Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: <Widget>[
-                //     Text(
-                //       'Amanda',
-                //       style: TextStyle(
-                //         fontSize: 24,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       child: CircleAvatar(
-                //         radius: 30,
-                //         backgroundImage:
-                //             AssetImage('assets/images/doctor_1.jpg'),
-                //       ),
-                //     )
-                //   ],
-                // ),
+                PatientNameWidget(),
                 ////////////////////////////////////////////////////////////////////////////////
 
                 SizedBox(
@@ -176,10 +200,13 @@ class HomePage extends ConsumerWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                /////////////////////////////////////////////////////////////////////////////
 
                 Center(
                   child: TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      ref.read(searchNameProvider.notifier).state = value;
+                    },
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       filled: true,
@@ -224,7 +251,7 @@ class HomePage extends ConsumerWidget {
                 ),
                 /////////////////////////////////////////////////////////////////////////////////////////
                 const Text(
-                  'Top Doctors',
+                  'Our Doctors',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -243,8 +270,11 @@ class HomePage extends ConsumerWidget {
                     if (snapshot.hasError) {
                       return Text('Something went wrong! ${snapshot.error}');
                     } else if (snapshot.hasData) {
-                      final doctors = snapshot.data!;
-                      // List<dynamic> filteredDoctors = doctors.where((doctor) {
+                      var doctors = snapshot.data!;
+                      // ref
+                      //     .read(doctorListProvider.notifier)
+                      //     .update((state) => doctors);
+                      // // List<dynamic> filteredDoctors = doctors.where((doctor) {
                       //   String doctorCategory = doctor.category;
                       //   switch (filterCategory) {
                       //     case FilterCategory.All:
@@ -265,6 +295,14 @@ class HomePage extends ConsumerWidget {
                       //       return true;
                       //   }
                       // }).toList();
+                      String searchName = ref.watch(searchNameProvider);
+                      if (searchName.isNotEmpty) {
+                        doctors = doctors
+                            .where((doctor) => doctor.name
+                                .toLowerCase()
+                                .contains(searchName.toLowerCase()))
+                            .toList();
+                      }
 
                       return ListView.separated(
                         shrinkWrap: true,

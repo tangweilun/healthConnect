@@ -107,13 +107,14 @@ class DoctorDetails extends ConsumerWidget {
                         ),
                         width: 90,
                         height: 40,
-                        child: Text(
-                          doctor.department,
-                          style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                        child: Center(
+                          child: Text(
+                            doctor.department,
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                     ],

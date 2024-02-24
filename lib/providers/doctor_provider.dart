@@ -14,3 +14,6 @@ class DoctorModelNotifier extends StateNotifier<Doctor> {
     state = doctor;
   }
 }
+
+// Define a provider for the list
+final searchNameProvider = StateProvider<String>((ref) => '');

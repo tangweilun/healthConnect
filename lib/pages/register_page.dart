@@ -22,9 +22,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final fullNameController = TextEditingController();
-  final dateOfBirthController = TextEditingController();
   final phoneNumberController = TextEditingController();
-
+  DateTime dateOfBirth = DateTime(1900);
   bool isEmailFieldEmpty = true; // Initially, consider the field as empty
   bool isPasswordFieldEmpty = true; // Initially, consider the field as empty
   bool isconfirmFieldEmpty = true; // Initially, consider the field as empty
@@ -58,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
         final jsonPatient = {
           'email': emailController.text,
           'blood_type': '',
-          'date_of_birth': dateOfBirthController.text,
+          'date_of_birth': dateOfBirth,
           'gender': _isMale ? 'Male' : 'Female',
           'name': fullNameController.text,
           'phone_number': phoneNumberController.text,
@@ -152,15 +151,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: screenHeight * 0.02,
                 ),
                 //textfield
-                MyTextField(
-                  controller: dateOfBirthController,
-                  hintText: 'Date Of Birth',
-                  obscureText: false,
-                  onChanged: (String newText) {
-                    setState(() {
-                      // Check if the text field is empty and update the boolean variable accordingly
-                      isDateOfBirthFieldEmpty = newText.isEmpty;
-                    });
+                // MyTextField(
+                //   controller: dateOfBirthController,
+                //   hintText: 'Date Of Birth',
+                //   obscureText: false,
+                //   onChanged: (String newText) {
+                //     setState(() {
+                //       // Check if the text field is empty and update the boolean variable accordingly
+                //       isDateOfBirthFieldEmpty = newText.isEmpty;
+                //     });
+                //   },
+                // ),
+                DatePickerWidget(
+                  onDateSelected: (DateTime date) {
+                    print('Selected date: $date');
+                    dateOfBirth = date;
                   },
                 ),
 
@@ -258,7 +263,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       passwordController.text.isEmpty ||
                       confirmPasswordController.text.isEmpty ||
                       fullNameController.text.isEmpty ||
-                      dateOfBirthController.text.isEmpty ||
                       phoneNumberController.text.isEmpty,
                   width: screenWidth * 0.5,
                   text: "Register",
@@ -325,6 +329,64 @@ class _RegisterPageState extends State<RegisterPage> {
                 )
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DatePickerWidget extends StatefulWidget {
+  final Function(DateTime)? onDateSelected;
+
+  const DatePickerWidget({Key? key, this.onDateSelected}) : super(key: key);
+
+  @override
+  _DatePickerWidgetState createState() => _DatePickerWidgetState();
+}
+
+class _DatePickerWidgetState extends State<DatePickerWidget> {
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        if (widget.onDateSelected != null) {
+          widget.onDateSelected!(selectedDate);
+        }
+      });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: () {
+        _selectDate(context);
+      },
+      child: SizedBox(
+        width: screenWidth * 0.76,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Date of Birth',
+            hintText: 'Select Date',
+            border: OutlineInputBorder(),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "${selectedDate.toLocal()}".split(' ')[0],
+                style: TextStyle(fontSize: 16),
+              ),
+              Icon(Icons.calendar_today),
+            ],
           ),
         ),
       ),
