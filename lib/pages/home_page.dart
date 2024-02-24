@@ -97,7 +97,7 @@ class HomePage extends ConsumerWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              "${doctor.speciality} in ${doctor.department} Department",
+              "${doctor.speciality} , ${doctor.department} Department",
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             trailing: const Icon(
@@ -154,6 +154,7 @@ class HomePage extends ConsumerWidget {
                   child: TextField(
                     controller: searchController,
                     onChanged: (value) {
+                      ref.read(isfilteredByDepartment.notifier).state = false;
                       ref.read(searchNameProvider.notifier).state = value;
                     },
                     style: const TextStyle(color: Colors.black),
