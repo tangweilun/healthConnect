@@ -1,21 +1,165 @@
-import 'dart:ui';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/id_generator.dart';
+import 'package:health_connect/models/appointment_model.dart';
 
 import 'package:health_connect/pages/custom_appbar.dart';
+import 'package:health_connect/providers/doctor_provider.dart';
+import 'package:health_connect/providers/reschedule_provider.dart';
+import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+DateTime selectedDateTime = DateTime.now();
+TimeOfDay selectedTime = TimeOfDay.now();
+
+TimeOfDay handleTimeSlotSelection(int selectedIndex) {
+  // Map the index to the corresponding time slot
+  selectedTime = timeSlots[selectedIndex];
+  return timeSlots[selectedIndex];
+}
+
+List<TimeOfDay> timeSlots = [
+  const TimeOfDay(hour: 9, minute: 0), // 9:00 AM
+  const TimeOfDay(hour: 10, minute: 0), // 10:00 AM
+  const TimeOfDay(hour: 11, minute: 0), // 11:00 AM
+  const TimeOfDay(hour: 12, minute: 0),
+  const TimeOfDay(hour: 13, minute: 0),
+  const TimeOfDay(hour: 14, minute: 0),
+  const TimeOfDay(hour: 15, minute: 0),
+  const TimeOfDay(hour: 16, minute: 0),
+];
+DateTime combineDateTimeAndTimeOfDay() {
+  return DateTime(
+    selectedDateTime.year,
+    selectedDateTime.month,
+    selectedDateTime.day,
+    selectedTime.hour,
+    selectedTime.minute,
+  );
+}
+
+class NakeAppointmentButton extends ConsumerWidget {
+  final bool timeSelected;
+  final bool dateSelected;
+  final String patientID;
+  final String patientName;
+  final String appointmentID;
+  NakeAppointmentButton({
+    Key? key,
+    required this.dateSelected,
+    required this.timeSelected,
+    required this.patientID,
+    required this.patientName,
+    required this.appointmentID,
+  }) : super(key: key);
+  Future createAppointment(Appointment appointment) async {
+    final docAppointment =
+        FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
+    final json = appointment.toJson();
+    await docAppointment.set(json);
+  }
+
+  Future rescheduleAppointment(
+      String appointmentID, DateTime newSelectedDateTime) async {
+    final docAppointment =
+        FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
+    docAppointment.update({
+      'date': newSelectedDateTime,
+      'status': 'pending',
+    });
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String rescheduleAppointmentID = '';
+    // Retrieve the values of _timeSelected and _dateSelected from the provider
+    final selectedDoctor = ref.watch(selectedDoctorProvider);
+    final isReschedule = ref.watch(rescheduleProvider);
+    if (isReschedule) {
+      rescheduleAppointmentID = ref.watch(appointmentIDProvider);
+    }
+
+    // You need to define _dateSelected somewhere or replace it with the appropriate provider
+    return MyButton(
+      width: double.infinity,
+      disable: timeSelected && dateSelected ? false : true,
+      onTap: () {
+        final appointment = Appointment(
+            id: isReschedule ? rescheduleAppointmentID : appointmentID,
+            department: selectedDoctor.department,
+            patientID: patientID,
+            doctorID: selectedDoctor.id,
+            date: combineDateTimeAndTimeOfDay(),
+            status: 'pending',
+            speciality: selectedDoctor.speciality,
+            doctorName: selectedDoctor.name,
+            photo: selectedDoctor.photo,
+            patientName: patientName);
+
+        if (isReschedule) {
+          rescheduleAppointment(
+              rescheduleAppointmentID, combineDateTimeAndTimeOfDay());
+        } else {
+          createAppointment(appointment);
+        }
+        //navigato to the appointment booked page
+        GoRouter.of(context)
+            .go('/doctordetail/appointmentbooking/successbooked');
+      },
+      text: 'Make Appointment',
+    );
+  }
+}
 
 class BookingPage extends StatefulWidget {
-  const BookingPage({super.key});
+  BookingPage({super.key});
 
   @override
   State<BookingPage> createState() => _BookingPageState();
 }
 
 class _BookingPageState extends State<BookingPage> {
+  final AuthService _authService =
+      AuthService(); // Create an instance of AuthService
+  String patientID = ''; // Variable to hold the patient ID
+  String patientName = '';
+  String appointmentID = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getPatientID(); // Call the method to retrieve the patient ID when the screen initializes
+    _getPatientName();
+    getAppointmentID();
+  }
+
+  Future<void> _getPatientID() async {
+    String? id =
+        await _authService.getPatientID(); // Call the method from AuthService
+    setState(() {
+      patientID =
+          id ?? ''; // Update the state variable with the retrieved patient ID
+    });
+  }
+
+  Future getAppointmentID() async {
+    final IDGenerator idGenerator = IDGenerator();
+    appointmentID = await idGenerator.generateId("appointment");
+  }
+
+  Future<void> _getPatientName() async {
+    String? name =
+        await _authService.getPatientName(); // Call the method from AuthService
+    setState(() {
+      patientName =
+          name ?? ''; // Update the state variable with the retrieved patient ID
+    });
+  }
+
   //declaration
   CalendarFormat _format = CalendarFormat.month;
   DateTime _focusDay = DateTime.now();
@@ -28,9 +172,9 @@ class _BookingPageState extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         appTitle: 'Appointment',
-        icon: const Icon(Icons.arrow_back_ios),
+        icon: Icon(Icons.arrow_back_ios),
       ),
       body: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
@@ -76,6 +220,8 @@ class _BookingPageState extends State<BookingPage> {
                         setState(() {
                           //when selected, update current index and st time selected to true
                           _currentindex = index;
+                          handleTimeSlotSelection(index);
+
                           _timeSelected = true;
                         });
                       },
@@ -110,19 +256,15 @@ class _BookingPageState extends State<BookingPage> {
               ),
         SliverToBoxAdapter(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 80),
-            child: MyButton(
-              width: double.infinity,
-              disable: _timeSelected && _dateSelected ? false : true,
-              onTap: () {
-                //navigato to the appointment booked page
-                GoRouter.of(context)
-                    .go('/doctordetail/appointmentbooking/successbooked');
-              },
-              text: 'Make Appointment',
-            ),
-          ),
-        )
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 80),
+              child: NakeAppointmentButton(
+                appointmentID: appointmentID,
+                patientID: patientID,
+                patientName: patientName,
+                timeSelected: _timeSelected,
+                dateSelected: _dateSelected,
+              )),
+        ),
       ]),
     );
   }
@@ -151,7 +293,7 @@ class _BookingPageState extends State<BookingPage> {
           _currentDay = selectedDay;
           _focusDay = focusedDay;
           _dateSelected = true;
-
+          selectedDateTime = selectedDay;
           //check if weekend is selected
           if (selectedDay.weekday == 6 || selectedDay.weekday == 7) {
             _isWeekend = true;

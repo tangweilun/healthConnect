@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
-  final controller;
+  final TextEditingController controller;
   final String hintText;
-  final bool obsureText;
+  final bool obscureText;
+  final void Function(String)? onChanged; // Add onChanged parameter
+
   const MyTextField({
-    super.key,
+    Key? key,
     required this.controller,
     required this.hintText,
-    required this.obsureText,
-  });
+    required this.obscureText,
+    this.onChanged, // Add this line
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,8 @@ class MyTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
         controller: controller,
-        obscureText: obsureText,
+        obscureText: obscureText,
+        onChanged: onChanged, // Pass onChanged to TextField
         decoration: InputDecoration(
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),

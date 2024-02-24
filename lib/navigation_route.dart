@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_connect/pages/forgot_password_page.dart';
+import 'package:health_connect/pages/login_page.dart';
 import 'package:health_connect/pages/viewappointment_page.dart';
 import 'package:health_connect/pages/booking_page.dart';
 import 'package:health_connect/pages/doctor_detail_page.dart';
@@ -48,7 +50,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/viewappointment',
             builder: (BuildContext context, GoRouterState state) {
-              return AppointmentPage();
+              return const AppointmentPage();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -63,9 +65,26 @@ class NavigationRoute extends StatelessWidget {
           ),
 
           GoRoute(
+            path: '/loginpage',
+            builder: (BuildContext context, GoRouterState state) {
+              return const LoginPage();
+            },
+            routes: <RouteBase>[
+              // The details screen to display stacked on the inner Navigator.
+              // This will cover screen A but not the application shell.
+              GoRoute(
+                path: 'forgotpasswordpage',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const ForgotPasswordPage();
+                },
+              ),
+            ],
+          ),
+
+          GoRoute(
             path: '/doctordetail',
             builder: (BuildContext context, GoRouterState state) {
-              return DoctorDetails();
+              return const DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -73,7 +92,7 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'appointmentbooking',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const BookingPage();
+                  return BookingPage();
                 },
                 routes: <RouteBase>[
                   /// Same as "/a/details", but displayed on the root Navigator by
@@ -83,7 +102,7 @@ class NavigationRoute extends StatelessWidget {
                     path: 'successbooked',
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (BuildContext context, GoRouterState state) {
-                      return AppointmentBooked();
+                      return const AppointmentBooked();
                     },
                   ),
                 ],
@@ -116,7 +135,7 @@ class NavigationRoute extends StatelessWidget {
           GoRoute(
             path: '/c',
             builder: (BuildContext context, GoRouterState state) {
-              return DoctorDetails();
+              return const DoctorDetails();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.

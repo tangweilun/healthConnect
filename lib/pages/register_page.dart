@@ -1,15 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/square_tile.dart';
+import 'package:health_connect/id_generator.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  RegisterPage({Key? key, required this.onTap});
+  const RegisterPage({Key? key, required this.onTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -19,6 +21,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  DateTime dateOfBirth = DateTime(1900);
+  bool isEmailFieldEmpty = true; // Initially, consider the field as empty
+  bool isPasswordFieldEmpty = true; // Initially, consider the field as empty
+  bool isconfirmFieldEmpty = true; // Initially, consider the field as empty
+  bool isFullNameFieldEmpty = true; // Initially, consider the field as empty
+  bool isDateOfBirthFieldEmpty = true; // Initially, consider the field as empty
+  bool isPhoneNumberFieldEmpty = true; // Initially, consider the field as empty
+  final CollectionReference patient =
+      FirebaseFirestore.instance.collection('patient');
+  final IDGenerator idGenerator = IDGenerator();
 
   void signUserIn() async {
     //show loading circle
@@ -34,13 +48,37 @@ class _RegisterPageState extends State<RegisterPage> {
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
+
+        // // Get the user's unique ID after registration
+        String patientID = await idGenerator.generateId("patient");
+        // // Add patient information to Firestore database
+        final docPatient =
+            FirebaseFirestore.instance.collection('patient').doc(patientID);
+        final jsonPatient = {
+          'email': emailController.text,
+          'blood_type': '',
+          'date_of_birth': dateOfBirth,
+          'gender': _isMale ? 'Male' : 'Female',
+          'name': fullNameController.text,
+          'phone_number': phoneNumberController.text,
+          'patient_id': patientID,
+        };
+        await docPatient.set(jsonPatient);
+
+        final docUser = FirebaseFirestore.instance.collection('Users').doc();
+        final jsonUser = {
+          'Email': emailController.text,
+          'Password': passwordController.text,
+          'UserRole': 'Patient',
+        };
+
+        await docUser.set(jsonUser);
       } else {
         showErrorMessage("password not match!");
       }
-      // ignore: use_build_context_synchronously
+
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      // ignore: use_build_context_synchronously
       Navigator.pop(context);
       showErrorMessage(e.code);
     }
@@ -57,10 +95,12 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  bool _isMale = true;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -71,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: screenHeight * 0.05,
                 ),
                 //logo
                 Image.asset(
@@ -81,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 //welcome back
                 SizedBox(
-                  height: screenHeight * 0.05,
+                  height: screenHeight * 0.02,
                 ),
                 Text(
                   'Let\'s create an account for you!',
@@ -89,13 +129,98 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: darkNavyBlueColor, fontSize: 16),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.03,
+                  height: screenHeight * 0.01,
                 ),
+
                 //username
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                MyTextField(
+                  controller: fullNameController,
+                  hintText: 'Full Name',
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isFullNameFieldEmpty = newText.isEmpty;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                //textfield
+                // MyTextField(
+                //   controller: dateOfBirthController,
+                //   hintText: 'Date Of Birth',
+                //   obscureText: false,
+                //   onChanged: (String newText) {
+                //     setState(() {
+                //       // Check if the text field is empty and update the boolean variable accordingly
+                //       isDateOfBirthFieldEmpty = newText.isEmpty;
+                //     });
+                //   },
+                // ),
+                DatePickerWidget(
+                  onDateSelected: (DateTime date) {
+                    print('Selected date: $date');
+                    dateOfBirth = date;
+                  },
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Radio(
+                        value: true,
+                        groupValue: _isMale,
+                        onChanged: (value) {
+                          setState(() {
+                            _isMale = value!;
+                          });
+                        }),
+                    Text('Male'),
+                    Radio(
+                      value: false,
+                      groupValue: _isMale,
+                      onChanged: (value) {
+                        setState(() {
+                          _isMale = value!;
+                        });
+                      },
+                    ),
+                    Text('Female'),
+                  ],
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                MyTextField(
+                  controller: phoneNumberController,
+                  hintText: 'Phone Number',
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isPhoneNumberFieldEmpty = newText.isEmpty;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: screenHeight * 0.02,
+                ),
+                //
                 MyTextField(
                   controller: emailController,
                   hintText: 'Email',
-                  obsureText: false,
+                  obscureText: false,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isEmailFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -104,7 +229,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
-                  obsureText: true,
+                  obscureText: true,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isPasswordFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,
@@ -113,23 +244,26 @@ class _RegisterPageState extends State<RegisterPage> {
                 MyTextField(
                   controller: confirmPasswordController,
                   hintText: 'Confirm Password',
-                  obsureText: true,
-                ),
-                SizedBox(
-                  height: screenHeight * 0.02,
+                  obscureText: true,
+                  onChanged: (String newText) {
+                    setState(() {
+                      // Check if the text field is empty and update the boolean variable accordingly
+                      isconfirmFieldEmpty = newText.isEmpty;
+                    });
+                  },
                 ),
 
                 //sign in button
                 SizedBox(
-                  height: screenHeight * 0.03,
+                  height: screenHeight * 0.02,
                 ),
 
                 MyButton(
-                  disable: emailController.text.isEmpty &&
-                          passwordController.text.isEmpty &&
-                          confirmPasswordController.text.isEmpty
-                      ? false
-                      : true,
+                  disable: emailController.text.isEmpty ||
+                      passwordController.text.isEmpty ||
+                      confirmPasswordController.text.isEmpty ||
+                      fullNameController.text.isEmpty ||
+                      phoneNumberController.text.isEmpty,
                   width: screenWidth * 0.5,
                   text: "Register",
                   onTap: signUserIn,
@@ -144,32 +278,32 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text('Or Continue with'),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    //   child: Text('Or Continue with'),
+                    // ),
+                    // Expanded(
+                    //   child: Divider(
+                    //     thickness: 0.5,
+                    //     color: Colors.grey[400],
+                    //   ),
+                    // ),
                   ],
                 ),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.01),
                 //google button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(
-                        onTap: () => AuthService().signInWithGoogle(),
-                        imagePath: 'assets/images/google_logo.png'),
-                    SizedBox(
-                      width: screenWidth * 0.05,
-                    ),
-                  ],
-                ),
-                SizedBox(height: screenHeight * 0.02),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SquareTile(
+                //         onTap: () => AuthService().signInWithGoogle(),
+                //         imagePath: 'assets/images/google_logo.png'),
+                //     SizedBox(
+                //       width: screenWidth * 0.05,
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(height: screenHeight * 0.01),
                 //not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -186,13 +320,73 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: const Text(
                         'Login now',
                         style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 )
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DatePickerWidget extends StatefulWidget {
+  final Function(DateTime)? onDateSelected;
+
+  const DatePickerWidget({Key? key, this.onDateSelected}) : super(key: key);
+
+  @override
+  _DatePickerWidgetState createState() => _DatePickerWidgetState();
+}
+
+class _DatePickerWidgetState extends State<DatePickerWidget> {
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        if (widget.onDateSelected != null) {
+          widget.onDateSelected!(selectedDate);
+        }
+      });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: () {
+        _selectDate(context);
+      },
+      child: SizedBox(
+        width: screenWidth * 0.76,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Date of Birth',
+            hintText: 'Select Date',
+            border: OutlineInputBorder(),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "${selectedDate.toLocal()}".split(' ')[0],
+                style: TextStyle(fontSize: 16),
+              ),
+              Icon(Icons.calendar_today),
+            ],
           ),
         ),
       ),

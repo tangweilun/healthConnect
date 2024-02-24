@@ -1,46 +1,64 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Doctor {
   final String id;
   final String name;
   final String description;
-  final String category;
-  final String experience;
-  final String rating;
-  final String image;
+
+  final String photo;
+  DateTime dateOfBirth = DateTime(1900);
+  final String department;
+  final String email;
+  final String numberOfPreviousPatient;
+  final String phoneNumber;
+  final String speciality;
+  final String workingExperience;
   // Add more properties as needed
 
   Doctor({
-    // Add more properties as needed
     this.id = '',
     this.name = '',
-    this.category = '',
-    this.experience = '',
-    this.rating = '',
-    this.image = '',
     this.description = '',
+    this.photo = '',
+    DateTime? dateOfBirth, // Using required for non-nullable types
+    this.department = '',
+    this.email = '',
+    this.numberOfPreviousPatient = '', // Default value added
+    this.phoneNumber = '',
+    this.speciality = '',
+    this.workingExperience = '',
   });
 
-  factory Doctor.fromJson(Map<String, dynamic> json) => Doctor(
-        id: json['id'] ?? '',
-        name: json['name'] ?? '',
-        category: json['category'] ?? '',
-        experience: json['experience'] ?? '',
-        rating: json['rating'] ?? '',
-        image: json['image'] ?? '',
-        description: json['description'] ?? '',
-        // Parse more properties as needed
-      );
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    return Doctor(
+      id: json['doctor_id'] ?? '',
+      name: json['name'] ?? '',
+      photo: json['photo'] ?? '',
+      description: json['description'] ?? '',
+      dateOfBirth: (json['date_of_birth'] as Timestamp).toDate(),
+      department: json['department'] ?? '',
+      email: json['email'] ?? '',
+      numberOfPreviousPatient: json['number_of_previous_patient'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      speciality: json['speciality'] ?? '',
+      workingExperience: json['work_experience'] ?? '',
+
+      // Add more properties as needed
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'doctor_id': id,
         'name': name,
-        'category': category,
-        'experience': experience,
-        'rating': rating,
-        'image': image,
+        'photo': photo,
         'description': description,
-        // Add more properties as needed
+        'date_of_birth':
+            dateOfBirth.toIso8601String(), // Convert DateTime to string
+        'department': department,
+        'email': email,
+        'number_of_previous_patient': numberOfPreviousPatient,
+        'phone_number': phoneNumber,
+        'speciality': speciality,
+        'work_Experience': workingExperience,
       };
 }
