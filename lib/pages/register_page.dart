@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/square_tile.dart';
+import 'package:health_connect/id_generator.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
@@ -33,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final CollectionReference patient =
       FirebaseFirestore.instance.collection('patient');
   final IDGenerator idGenerator = IDGenerator();
+
   void signUserIn() async {
     //show loading circle
     showDialog(
@@ -48,18 +50,30 @@ class _RegisterPageState extends State<RegisterPage> {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
 
-        // Get the user's unique ID after registration
-        String userId = FirebaseAuth.instance.currentUser.uid;
-
-        // Add patient information to Firestore database
-        await FirebaseFirestore.instance
-            .collection('patients')
-            .doc(userId)
-            .set({
+        // // Get the user's unique ID after registration
+        String patientID = await idGenerator.generateId("patient");
+        // // Add patient information to Firestore database
+        final docPatient =
+            FirebaseFirestore.instance.collection('patient').doc(patientID);
+        final jsonPatient = {
           'email': emailController.text,
+          'blood_type': '',
+          'date_of_birth': dateOfBirthController.text,
+          'gender': _isMale ? 'Male' : 'Female',
+          'name': fullNameController.text,
+          'phone_number': phoneNumberController.text,
+          'patient_id': patientID,
+        };
+        await docPatient.set(jsonPatient);
 
-          // Add more fields as needed
-        });
+        final docUser = FirebaseFirestore.instance.collection('Users').doc();
+        final jsonUser = {
+          'Email': emailController.text,
+          'Password': passwordController.text,
+          'UserRole': 'Patient',
+        };
+
+        await docUser.set(jsonUser);
       } else {
         showErrorMessage("password not match!");
       }
@@ -82,10 +96,12 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  bool _isMale = true;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -146,6 +162,31 @@ class _RegisterPageState extends State<RegisterPage> {
                       isDateOfBirthFieldEmpty = newText.isEmpty;
                     });
                   },
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Radio(
+                        value: true,
+                        groupValue: _isMale,
+                        onChanged: (value) {
+                          setState(() {
+                            _isMale = value!;
+                          });
+                        }),
+                    Text('Male'),
+                    Radio(
+                      value: false,
+                      groupValue: _isMale,
+                      onChanged: (value) {
+                        setState(() {
+                          _isMale = value!;
+                        });
+                      },
+                    ),
+                    Text('Female'),
+                  ],
                 ),
                 SizedBox(
                   height: screenHeight * 0.02,

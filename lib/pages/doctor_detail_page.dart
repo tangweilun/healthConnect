@@ -19,11 +19,11 @@ class DoctorDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    final doctor = ref.read(selectedDoctorProvider);
+    final doctor = ref.watch(selectedDoctorProvider);
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         appTitle: 'Doctor Details',
-        icon: const Icon(Icons.arrow_back_ios),
+        icon: Icon(Icons.arrow_back_ios),
         actions: [
           //Favourite button
           // IconButton(
@@ -47,7 +47,7 @@ class DoctorDetails extends ConsumerWidget {
                   CircleAvatar(
                     radius: 65.0,
                     backgroundImage:
-                        NetworkImage(doctor.image) as ImageProvider,
+                        NetworkImage(doctor.photo) as ImageProvider,
                     backgroundColor: Colors.white,
                   ),
                   const SizedBox(
@@ -64,33 +64,76 @@ class DoctorDetails extends ConsumerWidget {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  SizedBox(
-                    width: screenWidth * 0.75,
-                    child: const Text(
-                      'Columnbia University, Malaysia, Dr. Roberts completed her residency training at the renowned Mayo Clinic, where she honed her skills in preventive medicine, acute care, and chronic disease management.',
-                      style: TextStyle(
-                        color: Colors.grey,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            color: Colors
+                                .grey, // Change this color to whatever you desire
+                            width:
+                                2, // Change the width of the border as needed
+                          ),
+                        ),
+                        width: 90,
+                        height: 40,
+                        child: Text(
+                          doctor.speciality,
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                    ),
+                      SizedBox(
+                        width: screenWidth * 0.02,
+                      ),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            color: Colors
+                                .grey, // Change this color to whatever you desire
+                            width:
+                                2, // Change the width of the border as needed
+                          ),
+                        ),
+                        width: 90,
+                        height: 40,
+                        child: Text(
+                          doctor.department,
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  SizedBox(
-                    width: screenWidth * 0.75,
-                    child: const Text(
-                      'Sarawak General Hospital',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: screenWidth * 0.75,
+                  //   child: Text(
+                  //     doctor.speciality,
+                  //     style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: 15,
+                  //     ),
+                  //     softWrap: true,
+                  //     textAlign: TextAlign.center,
+                  //   ),
+                  // ),
                   Container(
                     padding: const EdgeInsets.all(20),
                     margin: const EdgeInsets.only(bottom: 30),
@@ -100,22 +143,18 @@ class DoctorDetails extends ConsumerWidget {
                         SizedBox(
                           width: screenWidth * 0.5,
                         ),
-
-                        //doctor exp, patient and rating
-                        // const DoctorInfo(),
-
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const InfoCard(label: 'Patient', value: "109"),
+                            InfoCard(
+                                label: 'Patient Count',
+                                value: doctor.numberOfPreviousPatient),
                             SizedBox(
                               width: screenWidth * 0.05,
                             ),
-                            const InfoCard(
-                                label: 'Experience', value: "10 Years"),
-                            SizedBox(
-                              width: screenWidth * 0.05,
-                            ),
-                            const InfoCard(label: 'Rating', value: "4.6"),
+                            InfoCard(
+                                label: 'Experience',
+                                value: "${doctor.workingExperience} Years"),
                           ],
                         ),
                         SizedBox(
@@ -123,16 +162,23 @@ class DoctorDetails extends ConsumerWidget {
                         ),
                         const Text(
                           'About Doctor',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 20),
                         ),
                         SizedBox(
-                          height: screenHeight * 0.05,
+                          height: screenHeight * 0.03,
                         ),
-                        const Text(
-                          'Dr.Tan is an experience Dentist at Sarawal. he is graduated since 2008, and completed his training at Sungai Buloh Hospital',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, height: 1.5),
-                          softWrap: true,
+                        SizedBox(
+                          width: screenWidth * 0.75,
+                          child: Text(
+                            doctor.description,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                            softWrap: true,
+                            textAlign: TextAlign.justify,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(20),
@@ -157,8 +203,6 @@ class DoctorDetails extends ConsumerWidget {
                 ],
               ),
             ),
-
-            // const Spacer(),
           ],
         ),
       )),
@@ -179,15 +223,15 @@ class InfoCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             color: mediumBlueGrayColor),
         padding: const EdgeInsets.symmetric(
-          vertical: 24,
-          horizontal: 10,
+          vertical: 22,
+          horizontal: 8,
         ),
         child: Column(children: <Widget>[
           Text(
             label,
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -198,7 +242,7 @@ class InfoCard extends StatelessWidget {
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w800,
             ),
           )

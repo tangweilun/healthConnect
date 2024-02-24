@@ -51,9 +51,10 @@ class IDGenerator {
   // Helper function to get the prefix for a given user type
   String _getIdPrefix(String userType) {
     const Map<String, String> idPrefixes = {
-      'patient': 'P',
       'doctor': 'D',
+      'patient': 'P',
       'manager': 'M',
+      'appointment': 'AP',
     };
 
     // Return the prefix if it exists, or an empty string if not

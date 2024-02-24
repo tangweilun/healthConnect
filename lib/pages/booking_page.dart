@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/id_generator.dart';
 import 'package:health_connect/models/appointment_model.dart';
 
 import 'package:health_connect/pages/custom_appbar.dart';
@@ -41,40 +42,67 @@ DateTime combineDateTimeAndTimeOfDay() {
   );
 }
 
-class MyConsumerWidget extends ConsumerWidget {
+class NakeAppointmentButton extends ConsumerWidget {
   final bool timeSelected;
   final bool dateSelected;
   final String patientID;
-  MyConsumerWidget({
+  final String patientName;
+  final String appointmentID;
+  NakeAppointmentButton({
     Key? key,
     required this.dateSelected,
     required this.timeSelected,
     required this.patientID,
+    required this.patientName,
+    required this.appointmentID,
   }) : super(key: key);
+  Future createAppointment(Appointment appointment) async {
+    final docAppointment =
+        FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
+    final json = appointment.toJson();
+    await docAppointment.set(json);
+  }
+
+  Future rescheduleAppointment(
+      String appointmentID, DateTime newSelectedDateTime) async {
+    final docAppointment =
+        FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
+    docAppointment.update({
+      'date': newSelectedDateTime,
+      'status': 'pending',
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String rescheduleAppointmentID = '';
     // Retrieve the values of _timeSelected and _dateSelected from the provider
     final selectedDoctor = ref.watch(selectedDoctorProvider);
     final isReschedule = ref.watch(rescheduleProvider);
-    final appointmentID = ref.watch(appointmentIDProvider);
+    if (isReschedule) {
+      rescheduleAppointmentID = ref.watch(appointmentIDProvider);
+    }
+
     // You need to define _dateSelected somewhere or replace it with the appropriate provider
     return MyButton(
       width: double.infinity,
       disable: timeSelected && dateSelected ? false : true,
       onTap: () {
         final appointment = Appointment(
+            id: isReschedule ? rescheduleAppointmentID : appointmentID,
+            department: selectedDoctor.department,
             patientID: patientID,
             doctorID: selectedDoctor.id,
-            //  doctorID: selectedDoctor.id,
             date: combineDateTimeAndTimeOfDay(),
             status: 'pending',
-            category: selectedDoctor.category,
+            speciality: selectedDoctor.speciality,
             doctorName: selectedDoctor.name,
-            image: selectedDoctor.image,
-            patientName: 'patientName');
+            photo: selectedDoctor.photo,
+            patientName: patientName);
 
         if (isReschedule) {
-          rescheduleAppointment(appointmentID, combineDateTimeAndTimeOfDay());
+          rescheduleAppointment(
+              rescheduleAppointmentID, combineDateTimeAndTimeOfDay());
         } else {
           createAppointment(appointment);
         }
@@ -85,26 +113,6 @@ class MyConsumerWidget extends ConsumerWidget {
       text: 'Make Appointment',
     );
   }
-}
-
-Future createAppointment(Appointment appointment) async {
-  final docAppointment =
-      FirebaseFirestore.instance.collection('appointment').doc();
-  appointment.id = docAppointment.id;
-
-  final json = appointment.toJson();
-  await docAppointment.set(json);
-}
-
-Future rescheduleAppointment(
-    String appointmentID, DateTime newSelectedDateTime) async {
-  final docAppointment =
-      FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
-
-  docAppointment.update({
-    'date': newSelectedDateTime,
-    'status': 'pending',
-  });
 }
 
 class BookingPage extends StatefulWidget {
@@ -118,11 +126,15 @@ class _BookingPageState extends State<BookingPage> {
   final AuthService _authService =
       AuthService(); // Create an instance of AuthService
   String patientID = ''; // Variable to hold the patient ID
+  String patientName = '';
+  String appointmentID = '';
 
   @override
   void initState() {
     super.initState();
     _getPatientID(); // Call the method to retrieve the patient ID when the screen initializes
+    _getPatientName();
+    getAppointmentID();
   }
 
   Future<void> _getPatientID() async {
@@ -131,6 +143,20 @@ class _BookingPageState extends State<BookingPage> {
     setState(() {
       patientID =
           id ?? ''; // Update the state variable with the retrieved patient ID
+    });
+  }
+
+  Future getAppointmentID() async {
+    final IDGenerator idGenerator = IDGenerator();
+    appointmentID = await idGenerator.generateId("appointment");
+  }
+
+  Future<void> _getPatientName() async {
+    String? name =
+        await _authService.getPatientName(); // Call the method from AuthService
+    setState(() {
+      patientName =
+          name ?? ''; // Update the state variable with the retrieved patient ID
     });
   }
 
@@ -231,33 +257,13 @@ class _BookingPageState extends State<BookingPage> {
         SliverToBoxAdapter(
           child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 80),
-              child: MyConsumerWidget(
+              child: NakeAppointmentButton(
+                appointmentID: appointmentID,
                 patientID: patientID,
+                patientName: patientName,
                 timeSelected: _timeSelected,
                 dateSelected: _dateSelected,
-              )
-
-              // print(selectedDoctor);
-              // print(selectedDoctor.category);
-
-              // final appointment = Appointment(
-              //     patientID: patientID,
-              //     doctorID: selectedDoctor.id,
-              //     //  doctorID: selectedDoctor.id,
-              //     date: combineDateTimeAndTimeOfDay(),
-              //     status: 'upcoming',
-              //     category: selectedDoctor.category,
-              //     doctorName: selectedDoctor.name,
-              //     image:
-              //         'https://firebasestorage.googleapis.com/v0/b/healthconnect-ad0f1.appspot.com/o/doctor_4.jpg?alt=media&token=730f6dad-af44-4128-9d57-97ac503c21e5',
-              //     patientName: 'patientName');
-              // print('before createAppointment function');
-              // //navigato to the appointment booked page
-              // createAppointment(appointment);
-              // print("after createAppointment function");
-              // GoRouter.of(context)
-              //     .go('/doctordetail/appointmentbooking/successbooked');
-              ),
+              )),
         ),
       ]),
     );

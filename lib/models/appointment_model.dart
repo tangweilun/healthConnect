@@ -1,26 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
-  String id;
+  // String id;
+  final String id;
   final String patientID;
   final String doctorID;
   final DateTime date;
   final String status;
-  final String category;
+  final String department;
   final String doctorName;
-  final String image;
+  final String photo;
   final String patientName;
+  final String speciality;
 
   Appointment({
-    this.id = '',
+    // this.id = '',
+    required this.id,
     required this.patientID,
     required this.doctorID,
     required this.date,
     required this.status,
-    required this.category,
+    required this.department,
     required this.doctorName,
-    required this.image,
+    required this.photo,
     required this.patientName,
+    required this.speciality,
   });
 
   // Convert the Appointment object to a Map (JSON-like structure)
@@ -32,26 +36,28 @@ class Appointment {
       'date': date,
       // Convert DateTime to ISO 8601 format
       'status': status,
-      'category': category,
+      'speciality': speciality,
+      'department': department,
       'doctorName': doctorName,
-      'image': image,
+      'photo': photo,
       'patientName': patientName,
     };
   }
 
-  factory Appointment.fromJson(Map<String, dynamic> json, String id) {
+  factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      // id: json['id'],
-      id: id,
+      id: json['id'],
+      // id: ,
       patientID: json['patientID'],
       doctorID: json['doctorID'],
-      // date: DateTime.parse(json['date']), // Parse ISO 8601 string to DateTime
+
       date:
           (json['date'] as Timestamp).toDate(), // Convert Timestamp to DateTime
       status: json['status'],
-      category: json['category'],
+      department: json['department'],
+      speciality: json['speciality'],
       doctorName: json['doctorName'],
-      image: json['image'],
+      photo: json['photo'],
       patientName: json['patientName'],
     );
   }

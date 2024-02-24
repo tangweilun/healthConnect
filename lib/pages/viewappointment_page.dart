@@ -10,13 +10,13 @@ import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:intl/intl.dart';
 
-class MyConsumerWidget extends ConsumerWidget {
-  final Doctor doctor;
+class ResheduleButton extends ConsumerWidget {
   final String appointmentID;
-  MyConsumerWidget({
+  final Doctor doctor;
+  ResheduleButton({
     Key? key,
-    required this.doctor,
     required this.appointmentID,
+    required this.doctor,
   }) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,15 +26,7 @@ class MyConsumerWidget extends ConsumerWidget {
           backgroundColor: mediumBlueGrayColor,
         ),
         onPressed: () {
-          ref.read(selectedDoctorProvider.notifier).updateDoctorModel(
-                doctor.name,
-                doctor.category,
-                doctor.experience,
-                doctor.rating,
-                doctor.image,
-                doctor.description,
-              );
-
+          ref.read(selectedDoctorProvider.notifier).updateDoctorModel(doctor);
           ref
               .read(appointmentIDProvider.notifier)
               .update((state) => appointmentID);
@@ -58,7 +50,7 @@ class AppointmentPage extends StatefulWidget {
   State<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-enum FilterStatus { pending, upcoming, cancel }
+enum FilterStatus { pending, upcoming, cancel, complete }
 
 class _AppointmentPageState extends State<AppointmentPage> {
   final AuthService _authService =
@@ -86,11 +78,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
     Stream<List<Appointment>> readAppointment() => FirebaseFirestore.instance
         .collection('appointment')
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) {
-              final data = doc.data();
-              final id = doc.id; // Accessing the document ID
-              return Appointment.fromJson(data, id);
-            }).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Appointment.fromJson(doc.data()))
+            .toList());
 
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -122,7 +112,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      for (FilterStatus filterStatus in FilterStatus.values)
+                      for (FilterStatus filterStatus
+                          in FilterStatus.values.getRange(0, 3))
                         Expanded(
                             child: GestureDetector(
                           onTap: () {
@@ -198,7 +189,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         filterStatus = FilterStatus.cancel;
                         break;
                       default:
-                        filterStatus = FilterStatus.pending;
+                        filterStatus = FilterStatus.complete;
                     }
                     // Check if the appointment is for the specified patient
                     bool patientMatches = appointment.patientID == patientID;
@@ -268,11 +259,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                         Row(
                                           children: [
                                             CircleAvatar(
-                                              // backgroundImage:Image.network(
-                                              //   schedule.image,
-                                              // ),
                                               backgroundImage: NetworkImage(
-                                                schedule.image,
+                                                schedule.photo,
                                               ),
                                               radius:
                                                   25, // Adjust the radius as needed
@@ -295,7 +283,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   height: 5,
                                                 ),
                                                 Text(
-                                                  schedule.category,
+                                                  schedule.department,
                                                   style: const TextStyle(
                                                     color: Colors.grey,
                                                     fontSize: 12,
@@ -309,7 +297,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        // const ScheduleCard(),
                                         Container(
                                           decoration: BoxDecoration(
                                             color: Colors.grey[300],
@@ -362,7 +349,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -391,15 +377,16 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                 ),
                                               ),
                                             const SizedBox(width: 20),
-                                            MyConsumerWidget(
+                                            ResheduleButton(
                                               appointmentID: schedule.id,
                                               doctor: Doctor(
                                                   id: schedule.doctorID,
                                                   name: schedule.doctorName,
-                                                  category: schedule.category,
-                                                  image: schedule.image,
-                                                  experience: '',
-                                                  rating: '',
+                                                  department:
+                                                      schedule.department,
+                                                  speciality:
+                                                      schedule.speciality,
+                                                  photo: schedule.photo,
                                                   description: ''),
                                             ),
                                           ],

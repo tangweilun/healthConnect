@@ -12,15 +12,15 @@ import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/theme/colors.dart';
 
-enum FilterCategory {
-  General,
-  Cardiology,
-  Resporations,
-  Dermatology,
-  Gynecology,
-  Dental,
-  All
-}
+// enum FilterCategory {
+//   General,
+//   Cardiology,
+//   Resporations,
+//   Dermatology,
+//   Gynecology,
+//   Dental,
+//   All
+// }
 
 List<Map<String, dynamic>> medCat = [
   {
@@ -66,31 +66,24 @@ class HomePage extends ConsumerWidget {
         .map((snapshot) =>
             snapshot.docs.map((doc) => Doctor.fromJson(doc.data())).toList());
 
-    Stream<List<Doctor>> readDoctorByCategory(FilterCategory filterCategory) =>
-        FirebaseFirestore.instance
-            .collection('doctor')
-            .where('category',
-                isEqualTo: filterCategory
-                    .toString()
-                    .split('.')
-                    .last) // Assuming 'category' is a field in the documents
-            .snapshots()
-            .map((snapshot) => snapshot.docs
-                .map((doc) => Doctor.fromJson(doc.data()))
-                .toList());
+    // Stream<List<Doctor>> readDoctorByCategory(FilterCategory filterCategory) =>
+    //     FirebaseFirestore.instance
+    //         .collection('doctor')
+    //         .where('category',
+    //             isEqualTo: filterCategory
+    //                 .toString()
+    //                 .split('.')
+    //                 .last) // Assuming 'category' is a field in the documents
+    //         .snapshots()
+    //         .map((snapshot) => snapshot.docs
+    //             .map((doc) => Doctor.fromJson(doc.data()))
+    //             .toList());
 
     //build doctor
     Widget buildDoctor(Doctor doctor) => GestureDetector(
           onTap: () {
-            ref.read(selectedDoctorProvider.notifier).updateDoctorModel(
-                  doctor.name,
-                  doctor.category,
-                  doctor.experience,
-                  doctor.rating,
-                  doctor.image,
-                  doctor.description,
-                );
-            ;
+            ref.read(selectedDoctorProvider.notifier).updateDoctorModel(doctor);
+
             GoRouter.of(context).go('/doctordetail');
           },
           child: ListTile(
@@ -98,18 +91,22 @@ class HomePage extends ConsumerWidget {
               // Wrap the Image.network with ClipOval to make it round
               child: ClipOval(
                 child: Image.network(
-                  doctor.image,
+                  doctor.photo,
                   // You can provide additional properties like width, height, etc. here
-                  width: 50,
-                  height: 50,
+                  width: 90,
+                  height: 90,
                   fit: BoxFit
                       .cover, // Adjust the image to cover the entire circle avatar
                 ),
               ),
             ),
-            title: Text(doctor.name),
+            title: Text(
+              doctor.name,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(
-              doctor.category,
+              "${doctor.speciality} in ${doctor.department} Department",
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
@@ -180,23 +177,7 @@ class HomePage extends ConsumerWidget {
                   height: 20,
                 ),
                 /////////////////////////////////////////////////////////////////////////////
-                // Container(
-                //   height: 46,
-                //   child: TextField(
-                //     style: TextStyle(color: Colors.black),
-                //     decoration: InputDecoration(
-                //       filled: true,
-                //       fillColor: Colors.white,
-                //       border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(8.0),
-                //           borderSide:
-                //               BorderSide(color: mediumBlueGrayColor, width: 2)),
-                //       hintText: 'Find Doctor',
-                //       prefixIcon: Icon(Icons.search),
-                //       prefixIconColor: mediumBlueGrayColor,
-                //     ),
-                //   ),
-                // ),
+
                 Center(
                   child: TextField(
                     style: const TextStyle(color: Colors.black),
@@ -254,10 +235,10 @@ class HomePage extends ConsumerWidget {
                   height: 14,
                 ),
                 StreamBuilder(
-                  stream: filterCategory == FilterCategory.All
-                      ? readDoctor()
-                      : readDoctorByCategory(filterCategory),
-                  // stream: readDoctor(),
+                  //   stream: filterCategory == FilterCategory.All
+                  //       ? readDoctor()
+                  //       : readDoctorByCategory(filterCategory),
+                  stream: readDoctor(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Something went wrong! ${snapshot.error}');
@@ -329,7 +310,7 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-FilterCategory filterCategory = FilterCategory.All;
+// FilterCategory filterCategory = FilterCategory.All;
 
 class CategoryCard extends StatefulWidget {
   const CategoryCard({super.key});
@@ -349,44 +330,44 @@ class _CategoryCardState extends State<CategoryCard> {
         children: List<Widget>.generate(medCat.length, (index) {
           return GestureDetector(
             onTap: () {
-              switch (medCat[index]['category']) {
-                case 'General':
-                  setState(() {
-                    filterCategory = FilterCategory.General;
-                  });
+              // switch (medCat[index]['category']) {
+              //   case 'General':
+              //     setState(() {
+              //       filterCategory = FilterCategory.General;
+              //     });
 
-                  break;
-                case 'Cardiology':
-                  setState(() {
-                    filterCategory = FilterCategory.Cardiology;
-                  });
+              //     break;
+              //   case 'Cardiology':
+              //     setState(() {
+              //       filterCategory = FilterCategory.Cardiology;
+              //     });
 
-                  break;
-                case 'Resporations':
-                  setState(() {
-                    filterCategory = FilterCategory.Resporations;
-                  });
-                  break;
+              //     break;
+              //   case 'Resporations':
+              //     setState(() {
+              //       filterCategory = FilterCategory.Resporations;
+              //     });
+              //     break;
 
-                case 'Dermatology':
-                  setState(() {
-                    filterCategory = FilterCategory.Dermatology;
-                  });
-                  break;
-                case 'Gynecology':
-                  setState(() {
-                    filterCategory = FilterCategory.Gynecology;
-                  });
-                  break;
-                case 'Dental':
-                  setState(() {
-                    filterCategory = FilterCategory.Dental;
-                  });
-                  break;
-                default:
-                  filterCategory = FilterCategory.All;
-              }
-              print(filterCategory.toString().split('.').last);
+              //   case 'Dermatology':
+              //     setState(() {
+              //       filterCategory = FilterCategory.Dermatology;
+              //     });
+              //     break;
+              //   case 'Gynecology':
+              //     setState(() {
+              //       filterCategory = FilterCategory.Gynecology;
+              //     });
+              //     break;
+              //   case 'Dental':
+              //     setState(() {
+              //       filterCategory = FilterCategory.Dental;
+              //     });
+              //     break;
+              //   default:
+              //     filterCategory = FilterCategory.All;
+              // }
+              // print(filterCategory.toString().split('.').last);
             },
             child: Card(
               margin: const EdgeInsets.only(right: 16),
