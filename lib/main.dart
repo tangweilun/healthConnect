@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health_connect/firebase_options.dart';
 
 import 'package:health_connect/pages/auth_page.dart';
+import 'package:health_connect/services/notification_service.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
