@@ -117,8 +117,7 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                 }
                 if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
                   return const Center(
-                      child:
-                          Text('No medical records found for this patient.'));
+                      child: Text('No medical records found for you.'));
                 }
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,

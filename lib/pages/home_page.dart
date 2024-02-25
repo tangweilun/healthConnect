@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,11 +22,76 @@ class PatientNameWidget extends StatefulWidget {
 
 class _PatientNameWidgetState extends State<PatientNameWidget> {
   String patientName = '';
+  String? mtoken = '';
   @override
   void initState() {
     super
         .initState(); // Call the method to retrieve the patient ID when the screen initializes
     _getPatientName();
+    setupPushNotification();
+  }
+
+  void setupPushNotification() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    print('my toke is ${token!}');
+    saveToken(token);
+  }
+  // void requestPermission() async {
+  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  //   NotificationSettings settings = await messaging.requestPermission(
+  //     alert: true,
+  //     announcement: false,
+  //     badge: true,
+  //     carPlay: false,
+  //     criticalAlert: false,
+  //     provisional: false,
+  //     sound: true,
+  //   );
+
+  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  //     print('User granted permission');
+  //   } else if (settings.authorizationStatus ==
+  //       AuthorizationStatus.provisional) {
+  //     print('User granted provisional permission');
+  //   } else {
+  //     print('User declined or has not accepted permission');
+  //   }
+  // }
+
+  // void getToken() async {
+  //   await FirebaseMessaging.instance.getToken().then((token) {
+  //     setState(() {
+  //       mtoken = token;
+  //       print("mytoken is ${mtoken!}");
+  //     });
+  //   });
+  // }
+
+  void saveToken(String? token) async {
+// Get the currently logged-in user
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Get the email of the currently logged-in user
+      String? userEmail = user.email;
+      print('userEmail:$userEmail');
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .where('Email', isEqualTo: userEmail)
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.update({
+            'fcmToken': token,
+          });
+        });
+      });
+    } else {
+      print('save Token function got problem');
+    }
   }
 
   final AuthService _authService =
