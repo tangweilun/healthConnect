@@ -77,6 +77,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
   Widget build(BuildContext context) {
     Stream<List<Appointment>> readAppointment() => FirebaseFirestore.instance
         .collection('appointment')
+        .orderBy('date')
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Appointment.fromJson(doc.data()))

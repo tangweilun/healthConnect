@@ -179,16 +179,6 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    // const Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    //   child: Text('Or Continue with'),
-                    // ),
-                    // Expanded(
-                    //   child: Divider(
-                    //     thickness: 0.5,
-                    //     color: Colors.grey[400],
-                    //   ),
-                    // ),
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),

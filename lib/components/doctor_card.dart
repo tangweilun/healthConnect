@@ -87,7 +87,6 @@ class _DoctorCardState extends State<DoctorCard> {
         ),
         onTap: () {
           //redirect to doctor detail
-          // context.read(selectedDoctorProvider).state = doctor;
           GoRouter.of(context).go('/doctordetail');
         },
       ),

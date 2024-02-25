@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/pages/forgot_password_page.dart';
 import 'package:health_connect/pages/login_page.dart';
+import 'package:health_connect/pages/medical_record_dialog.dart';
 import 'package:health_connect/pages/viewappointment_page.dart';
 import 'package:health_connect/pages/booking_page.dart';
 import 'package:health_connect/pages/doctor_detail_page.dart';
@@ -113,9 +114,9 @@ class NavigationRoute extends StatelessWidget {
           /// Displayed when the second item in the the bottom navigation bar is
           /// selected.
           GoRoute(
-            path: '/b',
+            path: '/medicalrecord',
             builder: (BuildContext context, GoRouterState state) {
-              return const ScreenB();
+              return const PatientDetailsPage();
             },
             routes: <RouteBase>[
               /// Same as "/a/details", but displayed on the root Navigator by
@@ -200,8 +201,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
             label: 'View Appointment',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.report),
-            label: 'Lab Result',
+            icon: Icon(Icons.my_library_books_outlined),
+            label: 'Medical Record',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -222,7 +223,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     if (location.startsWith('/viewappointment')) {
       return 1;
     }
-    if (location.startsWith('/b')) {
+    if (location.startsWith('/medicalrecord')) {
       return 2;
     }
     if (location.startsWith('/c')) {
@@ -238,7 +239,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       case 1:
         GoRouter.of(context).go('/viewappointment');
       case 2:
-        GoRouter.of(context).go('/b');
+        GoRouter.of(context).go('/medicalrecord');
       case 3:
         GoRouter.of(context).go('/c');
     }

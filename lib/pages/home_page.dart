@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/components/appointment_card.dart';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
+import 'package:lottie/lottie.dart';
 
 class PatientNameWidget extends StatefulWidget {
   const PatientNameWidget({super.key});
@@ -42,7 +43,7 @@ class _PatientNameWidgetState extends State<PatientNameWidget> {
   Widget build(BuildContext context) {
     return Text(
       'Welcome $patientName',
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
       ),
@@ -94,11 +95,11 @@ class HomePage extends ConsumerWidget {
             ),
             title: Text(
               doctor.name,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               "${doctor.speciality} , ${doctor.department} Department",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
@@ -132,22 +133,44 @@ class HomePage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                PatientNameWidget(),
+                const PatientNameWidget(),
 
                 SizedBox(
                   height: screenHeight * 0.02,
                 ),
-                const Text(
-                  'Appointment Today',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: screenHeight * 0.08,
+                  child: DefaultTextStyle(
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: mediumBlueGrayColor),
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          'Get started finding the care you\'re looking for',
+                          speed: const Duration(
+                              milliseconds: 100), // Adjust speed as needed
+                        ),
+                      ],
+                      totalRepeatCount: 10, // Animation will run only once
+                      pause: const Duration(
+                          milliseconds:
+                              5000), // Pause after animation completes
+                      displayFullTextOnTap:
+                          true, // Allow tapping to display full text
+                      stopPauseOnTap: true, // Stop pausing on tap
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //display appointment card here
-                const AppointmentCard(),
-                const SizedBox(
-                  height: 20,
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: Lottie.asset(
+                    'assets/homepage_animation.json',
+                    height: 120,
+                    width: 120,
+                  ),
                 ),
 
                 Center(
@@ -182,7 +205,7 @@ class HomePage extends ConsumerWidget {
                 ),
 
                 SizedBox(
-                  height: screenHeight * 0.02,
+                  height: screenHeight * 0.03,
                 ),
                 const Text(
                   'Departments',
@@ -192,7 +215,7 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.01,
+                  height: screenHeight * 0.02,
                 ),
                 StreamBuilder(
                   stream: readDoctor(),
@@ -266,10 +289,6 @@ class HomePage extends ConsumerWidget {
                       return Text('Something went wrong! ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       var doctors = snapshot.data!;
-                      List<String> departmentList = doctors
-                          .map((doctor) => doctor.department)
-                          .toSet()
-                          .toList();
                       String searchName = ref.watch(searchNameProvider);
 
                       if (searchName.isNotEmpty &&
@@ -289,7 +308,7 @@ class HomePage extends ConsumerWidget {
 
                       if (doctors.isEmpty) {
                         return Container(
-                          padding: EdgeInsets.all(
+                          padding: const EdgeInsets.all(
                               16.0), // Add padding for better visual appeal
                           decoration: BoxDecoration(
                             color: Colors.grey[
