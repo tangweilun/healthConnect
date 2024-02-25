@@ -50,56 +50,17 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
     return Scaffold(
       appBar: CustomAppBar(
         appTitle: '$patientName\'s Medical Records',
-        icon: Icon(Icons.arrow_back_ios),
+        icon: const Icon(Icons.arrow_back_ios),
         actions: [],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Text(
-                //   'Patient Name: $patientName',
-                //   style: const TextStyle(
-                //       fontSize: 24, fontWeight: FontWeight.bold),
-                // ),
-                // const SizedBox(height: 10),
-                // FutureBuilder<DocumentSnapshot>(
-                //   future: FirebaseFirestore.instance
-                //       .collection('patient')
-                //       .doc(patientId)
-                //       .get(),
-                //   builder: (context, patientSnapshot) {
-                //     if (patientSnapshot.connectionState ==
-                //         ConnectionState.waiting) {
-                //       return const Center(child: CircularProgressIndicator());
-                //     }
-                //     if (patientSnapshot.hasError) {
-                //       return Center(
-                //           child: Text('Error: ${patientSnapshot.error}'));
-                //     }
-                //     if (!patientSnapshot.hasData) {
-                //       return const Center(
-                //           child: Text('No patient data found.'));
-                //     }
-                //     var patientData =
-                //         patientSnapshot.data!.data() as Map<String, dynamic>;
-                //     Timestamp dobTimestamp = patientData['date_of_birth'];
-                //     DateTime dob = dobTimestamp.toDate();
-                //     int age = _calculateAge(dob);
-                //     return Text(
-                //       'Age: $age',
-                //       style: const TextStyle(fontSize: 16),
-                //     );
-                //   },
-                // ),
-                // const SizedBox(height: 10),
-                // Text('Patient ID: $patientId',
-                //     style: const TextStyle(fontSize: 16)),
-              ],
+              children: [],
             ),
           ),
           Expanded(
@@ -117,7 +78,15 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                 }
                 if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
                   return const Center(
-                      child: Text('No medical records found for you.'));
+                    child: Text(
+                      'No medical records found for you.',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
                 }
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
@@ -139,11 +108,11 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.calendar_today, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.calendar_today, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Date: $formattedDate',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
@@ -151,62 +120,62 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(Icons.local_hospital, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.local_hospital, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Diagnosis: ${data['diagnosis']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.person, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.person, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Doctor: ${data['doctor_name']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.note, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.note, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Notes: ${data['notes']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.medical_services, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.medical_services, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Prescribed Medication: ${data['prescribed_medication']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.healing, size: 20),
-                                SizedBox(width: 8),
+                                const Icon(Icons.healing, size: 20),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Symptoms: ${data['symptoms']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black87),
                                 ),
                               ],

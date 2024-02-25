@@ -9,6 +9,7 @@ import 'package:health_connect/pages/custom_appbar.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/providers/reschedule_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
+import 'package:health_connect/services/notification_service.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,6 +62,10 @@ class NakeAppointmentButton extends ConsumerWidget {
         FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
     final json = appointment.toJson();
     await docAppointment.set(json);
+    PushNotifications.sendPushMessage(
+        'ea8qttQmQ5uNNUjaLpePc-:APA91bGqQ2kWx5a8m4jsHjSY4wfpr1FdVhmgMB4DrGUSu_g1Ye6GkEpGE1qiE_zGHd4fe8h9LMvXr2vpIF6lZ2SrY7R03RJ_rq-u4bgnv4IuXeMYiGbtuSwQu7uowINEdmknm43NN7Gj',
+        'Appointment Request',
+        'Patient:$patientName has requested an appointment for ${selectedDateTime.year}/${selectedDateTime.month}/${selectedDateTime.day}at ${selectedTime.hour}:${selectedTime.minute}. Please review and confirm.');
   }
 
   Future rescheduleAppointment(
@@ -71,6 +76,10 @@ class NakeAppointmentButton extends ConsumerWidget {
       'date': newSelectedDateTime,
       'status': 'pending',
     });
+    PushNotifications.sendPushMessage(
+        'ea8qttQmQ5uNNUjaLpePc-:APA91bGqQ2kWx5a8m4jsHjSY4wfpr1FdVhmgMB4DrGUSu_g1Ye6GkEpGE1qiE_zGHd4fe8h9LMvXr2vpIF6lZ2SrY7R03RJ_rq-u4bgnv4IuXeMYiGbtuSwQu7uowINEdmknm43NN7Gj',
+        'Appointment Request',
+        'Patient: [Patient Name] has requested an appointment. Please review and confirm.');
   }
 
   @override

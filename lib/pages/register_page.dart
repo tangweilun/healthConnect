@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/my_button.dart';
-import 'package:health_connect/components/square_tile.dart';
 import 'package:health_connect/id_generator.dart';
-import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -68,7 +66,6 @@ class _RegisterPageState extends State<RegisterPage> {
         final docUser = FirebaseFirestore.instance.collection('Users').doc();
         final jsonUser = {
           'Email': emailController.text,
-          'Password': passwordController.text,
           'UserRole': 'Patient',
         };
 
