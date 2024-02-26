@@ -24,7 +24,7 @@ class _DoctorCardState extends State<DoctorCard> {
       child: GestureDetector(
         child: Card(
           elevation: 5,
-          color: paleGreyColor,
+          color: AppColors.paleGrey,
           child: Row(children: [
             SizedBox(
               width: screenWidth * 0.33,
@@ -87,7 +87,6 @@ class _DoctorCardState extends State<DoctorCard> {
         ),
         onTap: () {
           //redirect to doctor detail
-          // context.read(selectedDoctorProvider).state = doctor;
           GoRouter.of(context).go('/doctordetail');
         },
       ),

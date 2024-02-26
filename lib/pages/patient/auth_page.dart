@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_connect/navigation_route.dart';
 
-import 'package:health_connect/pages/loginOrRegister_page.dart';
+import 'package:health_connect/pages/patient/loginOrRegister_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});

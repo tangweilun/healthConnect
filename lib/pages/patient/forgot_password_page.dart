@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/pages/custom_appbar.dart';
-import 'package:health_connect/pages/login_page.dart';
+
+import 'package:health_connect/pages/patient/login_page.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -60,7 +60,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: mediumBlueGrayColor,
+              color: AppColors.mediumBlueGrayColor,
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
@@ -123,7 +123,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         vertical: 12), // Adjust padding here
                     margin: const EdgeInsets.symmetric(horizontal: 25),
                     decoration: BoxDecoration(
-                      color: disable ? Colors.grey : mediumBlueGrayColor,
+                      color:
+                          disable ? Colors.grey : AppColors.mediumBlueGrayColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(

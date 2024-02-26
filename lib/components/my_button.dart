@@ -17,7 +17,7 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Determine the color based on the disable state
-    Color buttonColor = disable ? Colors.grey : mediumBlueGrayColor;
+    Color buttonColor = disable ? Colors.grey : AppColors.mediumBlueGrayColor;
     return GestureDetector(
       onTap: disable ? null : onTap,
       child: Container(

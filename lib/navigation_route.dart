@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/pages/forgot_password_page.dart';
-import 'package:health_connect/pages/login_page.dart';
-import 'package:health_connect/pages/viewappointment_page.dart';
-import 'package:health_connect/pages/booking_page.dart';
-import 'package:health_connect/pages/doctor_detail_page.dart';
-import 'package:health_connect/pages/home_page.dart';
-import 'package:health_connect/pages/success_booked.dart';
+import 'package:health_connect/pages/patient/forgot_password_page.dart';
+import 'package:health_connect/pages/patient/login_page.dart';
+import 'package:health_connect/pages/patient/medical_record_dialog.dart';
+import 'package:health_connect/pages/patient/profile_page.dart';
+import 'package:health_connect/pages/patient/viewappointment_page.dart';
+import 'package:health_connect/pages/patient/booking_page.dart';
+import 'package:health_connect/pages/patient/doctor_detail_page.dart';
+import 'package:health_connect/pages/patient/home_page.dart';
+import 'package:health_connect/pages/patient/success_booked.dart';
 import 'package:health_connect/theme/colors.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -40,7 +42,7 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DetailsScreen(label: 'A');
+                  return HomePage();
                 },
               ),
             ],
@@ -113,9 +115,9 @@ class NavigationRoute extends StatelessWidget {
           /// Displayed when the second item in the the bottom navigation bar is
           /// selected.
           GoRoute(
-            path: '/b',
+            path: '/medicalrecord',
             builder: (BuildContext context, GoRouterState state) {
-              return const ScreenB();
+              return const PatientDetailsPage();
             },
             routes: <RouteBase>[
               /// Same as "/a/details", but displayed on the root Navigator by
@@ -125,7 +127,7 @@ class NavigationRoute extends StatelessWidget {
                 path: 'details',
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DetailsScreen(label: 'B');
+                  return HomePage();
                 },
               ),
             ],
@@ -133,9 +135,9 @@ class NavigationRoute extends StatelessWidget {
 
           /// The third screen to display in the bottom navigation bar.
           GoRoute(
-            path: '/c',
+            path: '/profilepage',
             builder: (BuildContext context, GoRouterState state) {
-              return const DoctorDetails();
+              return ProfilePage();
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
@@ -143,7 +145,7 @@ class NavigationRoute extends StatelessWidget {
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DetailsScreen(label: 'C');
+                  return HomePage();
                 },
               ),
             ],
@@ -184,8 +186,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
-        selectedIconTheme: const IconThemeData(color: mediumBlueGrayColor),
-        selectedItemColor: mediumBlueGrayColor, // Change selected item color
+        selectedIconTheme:
+            const IconThemeData(color: AppColors.mediumBlueGrayColor),
+        selectedItemColor:
+            AppColors.mediumBlueGrayColor, // Change selected item color
         unselectedItemColor: Colors.black, // Change unselected item color
         selectedLabelStyle: const TextStyle(
             color: Colors.black,
@@ -200,8 +204,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
             label: 'View Appointment',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.report),
-            label: 'Lab Result',
+            icon: Icon(Icons.my_library_books_outlined),
+            label: 'Medical Record',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -222,10 +226,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
     if (location.startsWith('/viewappointment')) {
       return 1;
     }
-    if (location.startsWith('/b')) {
+    if (location.startsWith('/medicalrecord')) {
       return 2;
     }
-    if (location.startsWith('/c')) {
+    if (location.startsWith('/profilepage')) {
       return 3;
     }
     return 0;
@@ -238,117 +242,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
       case 1:
         GoRouter.of(context).go('/viewappointment');
       case 2:
-        GoRouter.of(context).go('/b');
+        GoRouter.of(context).go('/medicalrecord');
       case 3:
-        GoRouter.of(context).go('/c');
+        GoRouter.of(context).go('/profilepage');
     }
-  }
-}
-
-/// The first screen in the bottom navigation bar.
-class ScreenA extends StatelessWidget {
-  /// Constructs a [ScreenA] widget.
-  const ScreenA({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text('Screen A'),
-            TextButton(
-              onPressed: () {
-                GoRouter.of(context).go('/a/details');
-              },
-              child: const Text('View A details'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// The second screen in the bottom navigation bar.
-class ScreenB extends StatelessWidget {
-  /// Constructs a [ScreenB] widget.
-  const ScreenB({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text('Screen B'),
-            TextButton(
-              onPressed: () {
-                GoRouter.of(context).go('/b/details');
-              },
-              child: const Text('View B details'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// The third screen in the bottom navigation bar.
-class ScreenC extends StatelessWidget {
-  /// Constructs a [ScreenC] widget.
-  const ScreenC({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text('Screen C'),
-            TextButton(
-              onPressed: () {
-                GoRouter.of(context).go('/c/details');
-              },
-              child: const Text('View C details'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// The details screen for either the A, B or C screen.
-class DetailsScreen extends StatelessWidget {
-  /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    super.key,
-  });
-
-  /// The label to display in the center of the screen.
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details Screen'),
-      ),
-      body: Center(
-        child: Text(
-          'Details for $label',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ),
-    );
   }
 }

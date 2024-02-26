@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:health_connect/components/my_button.dart';
 
-import 'package:health_connect/pages/custom_appbar.dart';
+import 'package:health_connect/pages/patient/custom_appbar.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/providers/reschedule_provider.dart';
 import 'package:health_connect/theme/colors.dart';
@@ -24,22 +24,12 @@ class DoctorDetails extends ConsumerWidget {
       appBar: const CustomAppBar(
         appTitle: 'Doctor Details',
         icon: Icon(Icons.arrow_back_ios),
-        actions: [
-          //Favourite button
-          // IconButton(
-          //     onPressed: () {},
-          //     icon: Icon(
-          //       isFav ? Icons.favorite_outline_rounded : Icons.favorite_outline,
-          //       color: Colors.red,
-          //     ))
-        ],
+        actions: [],
       ),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // AboutDoctor(),
-            // DetailBody(), //build doctor avatar and intro here
             SizedBox(
               width: double.infinity,
               child: Column(
@@ -68,8 +58,8 @@ class DoctorDetails extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                           border: Border.all(
@@ -83,7 +73,7 @@ class DoctorDetails extends ConsumerWidget {
                         height: 40,
                         child: Text(
                           doctor.speciality,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 10,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
@@ -94,8 +84,8 @@ class DoctorDetails extends ConsumerWidget {
                         width: screenWidth * 0.02,
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                           border: Border.all(
@@ -110,7 +100,7 @@ class DoctorDetails extends ConsumerWidget {
                         child: Center(
                           child: Text(
                             doctor.department,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 10,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
@@ -122,19 +112,6 @@ class DoctorDetails extends ConsumerWidget {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  // SizedBox(
-                  //   width: screenWidth * 0.75,
-                  //   child: Text(
-                  //     doctor.speciality,
-                  //     style: TextStyle(
-                  //       color: Colors.black,
-                  //       fontWeight: FontWeight.bold,
-                  //       fontSize: 15,
-                  //     ),
-                  //     softWrap: true,
-                  //     textAlign: TextAlign.center,
-                  //   ),
-                  // ),
                   Container(
                     padding: const EdgeInsets.all(20),
                     margin: const EdgeInsets.only(bottom: 30),
@@ -173,7 +150,7 @@ class DoctorDetails extends ConsumerWidget {
                           width: screenWidth * 0.75,
                           child: Text(
                             doctor.description,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                             ),
@@ -222,7 +199,7 @@ class InfoCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: mediumBlueGrayColor),
+            color: AppColors.mediumBlueGrayColor),
         padding: const EdgeInsets.symmetric(
           vertical: 22,
           horizontal: 8,

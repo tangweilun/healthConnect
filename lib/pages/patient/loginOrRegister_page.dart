@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:health_connect/pages/login_page.dart';
-import 'package:health_connect/pages/register_page.dart';
+import 'package:health_connect/pages/patient/login_page.dart';
+import 'package:health_connect/pages/patient/register_page.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {
   const LoginOrRegisterPage({super.key});

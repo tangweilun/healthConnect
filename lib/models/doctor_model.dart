@@ -38,7 +38,8 @@ class Doctor {
       dateOfBirth: (json['date_of_birth'] as Timestamp).toDate(),
       department: json['department'] ?? '',
       email: json['email'] ?? '',
-      numberOfPreviousPatient: json['number_of_previous_patient'] ?? '',
+      numberOfPreviousPatient:
+          json['number_of_previous_patient']?.toString() ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       speciality: json['speciality'] ?? '',
       workingExperience: json['work_experience'] ?? '',

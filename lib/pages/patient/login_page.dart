@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/pages/forgot_password_page.dart';
+import 'package:health_connect/pages/patient/forgot_password_page.dart';
 
 import 'package:health_connect/theme/colors.dart';
 import 'package:lottie/lottie.dart';
@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 Text('Welcome back ',
                     style: GoogleFonts.roboto(
-                        color: mediumBlueGrayColor, fontSize: 24)),
+                        color: AppColors.mediumBlueGrayColor, fontSize: 24)),
                 SizedBox(
                   height: screenHeight * 0.03,
                 ),
@@ -152,7 +152,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle(
-                              color: mediumBlueGrayColor, fontSize: 16),
+                              color: AppColors.mediumBlueGrayColor,
+                              fontSize: 16),
                         ),
                       ),
                     ],
@@ -179,16 +180,6 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    // const Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    //   child: Text('Or Continue with'),
-                    // ),
-                    // Expanded(
-                    //   child: Divider(
-                    //     thickness: 0.5,
-                    //     color: Colors.grey[400],
-                    //   ),
-                    // ),
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),

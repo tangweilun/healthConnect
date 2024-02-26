@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_connect/components/my_textfield.dart';
 import 'package:health_connect/components/my_button.dart';
-import 'package:health_connect/components/square_tile.dart';
 import 'package:health_connect/id_generator.dart';
-import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -68,7 +66,6 @@ class _RegisterPageState extends State<RegisterPage> {
         final docUser = FirebaseFirestore.instance.collection('Users').doc();
         final jsonUser = {
           'Email': emailController.text,
-          'Password': passwordController.text,
           'UserRole': 'Patient',
         };
 
@@ -111,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: screenHeight * 0.05,
+                  height: screenHeight * 0.03,
                 ),
                 //logo
                 Image.asset(
@@ -126,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   'Let\'s create an account for you!',
                   style: GoogleFonts.roboto(
-                      color: darkNavyBlueColor, fontSize: 16),
+                      color: AppColors.darkNavyBlue, fontSize: 16),
                 ),
                 SizedBox(
                   height: screenHeight * 0.01,
@@ -180,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             _isMale = value!;
                           });
                         }),
-                    Text('Male'),
+                    const Text('Male'),
                     Radio(
                       value: false,
                       groupValue: _isMale,
@@ -190,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    Text('Female'),
+                    const Text('Female'),
                   ],
                 ),
                 SizedBox(
@@ -326,7 +323,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: screenHeight * 0.02),
               ],
             ),
           ),
@@ -373,7 +371,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       child: SizedBox(
         width: screenWidth * 0.76,
         child: InputDecorator(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Date of Birth',
             hintText: 'Select Date',
             border: OutlineInputBorder(),
@@ -383,9 +381,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             children: <Widget>[
               Text(
                 "${selectedDate.toLocal()}".split(' ')[0],
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
-              Icon(Icons.calendar_today),
+              const Icon(Icons.calendar_today),
             ],
           ),
         ),

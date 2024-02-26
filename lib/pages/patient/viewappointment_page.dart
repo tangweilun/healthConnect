@@ -7,6 +7,7 @@ import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/providers/reschedule_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
+import 'package:health_connect/services/notification_service.dart';
 import 'package:health_connect/theme/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -18,18 +19,20 @@ class ResheduleButton extends ConsumerWidget {
     required this.appointmentID,
     required this.doctor,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: mediumBlueGrayColor,
+          backgroundColor: AppColors.mediumBlueGrayColor,
         ),
         onPressed: () {
           ref.read(selectedDoctorProvider.notifier).updateDoctorModel(doctor);
           ref
               .read(appointmentIDProvider.notifier)
               .update((state) => appointmentID);
+          ref.read(doctorIdProvider.notifier).update((state) => doctor.id);
 
           ref.read(rescheduleProvider.notifier).update((state) => true);
           GoRouter.of(context).go('/doctordetail/appointmentbooking');
@@ -50,12 +53,13 @@ class AppointmentPage extends StatefulWidget {
   State<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-enum FilterStatus { pending, upcoming, cancel, complete }
+enum FilterStatus { pending, upcoming, cancelled, complete }
 
 class _AppointmentPageState extends State<AppointmentPage> {
   final AuthService _authService =
       AuthService(); // Create an instance of AuthService
   String? patientID; // Variable to hold the patient ID
+  String patientName = '';
   FilterStatus status = FilterStatus.pending;
   Alignment _alignment = Alignment.centerLeft;
 
@@ -63,6 +67,16 @@ class _AppointmentPageState extends State<AppointmentPage> {
   void initState() {
     super.initState();
     _getPatientID(); // Call the method to retrieve the patient ID when the screen initializes
+    _getPatientName();
+  }
+
+  Future<void> _getPatientName() async {
+    String? name =
+        await _authService.getPatientName(); // Call the method from AuthService
+    setState(() {
+      patientName =
+          name ?? ''; // Update the state variable with the retrieved patient ID
+    });
   }
 
   Future<void> _getPatientID() async {
@@ -73,10 +87,44 @@ class _AppointmentPageState extends State<AppointmentPage> {
     });
   }
 
+  void pushNotiDoctor(
+      String doctorID, String patientName, String date, String time) async {
+    String token = '';
+    String email = '';
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshotDoctor =
+        await FirebaseFirestore.instance
+            .collection('doctor')
+            .where('doctor_id', isEqualTo: doctorID)
+            .get();
+    // Check if there are any documents
+    if (querySnapshotDoctor.docs.isNotEmpty) {
+      var document = querySnapshotDoctor.docs.first;
+      email = document.data()['email']; // Access a particular field
+      QuerySnapshot<Map<String, dynamic>> querySnapshotToken =
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .where('Email', isEqualTo: email)
+              .get();
+      if (querySnapshotToken.docs.isNotEmpty) {
+        var document = querySnapshotToken.docs.first;
+        token = document.data()['fcmToken']; // Access a part
+        PushNotifications.sendPushMessage(
+          token,
+          'Patient:$patientName has cancelled an appointment for ${date} at ${time}.',
+          'Appointment Cancelled',
+        );
+      } else {
+        print('No matching documents found.');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<List<Appointment>> readAppointment() => FirebaseFirestore.instance
         .collection('appointment')
+        .orderBy('date')
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Appointment.fromJson(doc.data()))
@@ -95,7 +143,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
             'Appointment Schedule',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: mediumBlueGrayColor,
+              color: AppColors.mediumBlueGrayColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -125,8 +173,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                   FilterStatus.upcoming) {
                                 status = FilterStatus.upcoming;
                                 _alignment = Alignment.center;
-                              } else if (filterStatus == FilterStatus.cancel) {
-                                status = FilterStatus.cancel;
+                              } else if (filterStatus ==
+                                  FilterStatus.cancelled) {
+                                status = FilterStatus.cancelled;
                                 _alignment = Alignment.centerRight;
                               }
                             });
@@ -144,7 +193,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   width: 100,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: mediumBlueGrayColor,
+                    color: AppColors.mediumBlueGrayColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
@@ -185,8 +234,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       case 'pending':
                         filterStatus = FilterStatus.pending;
                         break;
-                      case 'cancel':
-                        filterStatus = FilterStatus.cancel;
+                      case 'cancelled':
+                        filterStatus = FilterStatus.cancelled;
                         break;
                       default:
                         filterStatus = FilterStatus.complete;
@@ -211,7 +260,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     case FilterStatus.pending:
                       statusMessage = 'pending';
                       break;
-                    case FilterStatus.cancel:
+                    case FilterStatus.cancelled:
                       statusMessage = 'cancelled';
                       break;
                     default:
@@ -235,9 +284,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               itemBuilder: (((context, index) {
                                 // var schedule = filteredSchedules[index];
                                 var schedule = filteredAppointments[index];
-
-                                // bool isLastElement =
-                                //     filteredSchedules.length + 1 == index;
                                 bool isLastElement =
                                     filteredAppointments.length + 1 == index;
                                 return Card(
@@ -320,9 +366,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                 Text(
                                                   DateFormat('yyyy-MM-dd')
                                                       .format(schedule.date),
-                                                  // 'testing date',
                                                   style: const TextStyle(
-                                                    color: darkNavyBlueColor,
+                                                    color:
+                                                        AppColors.darkNavyBlue,
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -330,7 +376,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                 ),
                                                 const Icon(
                                                   Icons.access_alarm,
-                                                  color: darkNavyBlueColor,
+                                                  color: AppColors.darkNavyBlue,
                                                   size: 17,
                                                 ),
                                                 const SizedBox(
@@ -342,7 +388,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   DateFormat('hh:mm a')
                                                       .format(schedule.date),
                                                   style: const TextStyle(
-                                                      color: darkNavyBlueColor),
+                                                      color: AppColors
+                                                          .darkNavyBlue),
                                                 ))
                                               ]),
                                         ),
@@ -353,7 +400,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            if (schedule.status != 'cancel')
+                                            if (schedule.status != 'cancelled')
                                               Expanded(
                                                 child: OutlinedButton(
                                                   onPressed: () {
@@ -365,14 +412,24 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                             .doc(schedule.id);
 
                                                     docAppointment.update({
-                                                      'status': 'cancel',
+                                                      'status': 'cancelled',
                                                     });
+
+                                                    pushNotiDoctor(
+                                                        schedule.doctorID,
+                                                        patientName,
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(
+                                                                schedule.date),
+                                                        DateFormat('hh:mm')
+                                                            .format(
+                                                                schedule.date));
                                                   },
                                                   child: const Text(
                                                     'Cancel',
                                                     style: TextStyle(
-                                                        color:
-                                                            darkNavyBlueColor),
+                                                        color: AppColors
+                                                            .darkNavyBlue),
                                                   ),
                                                 ),
                                               ),

@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/components/appointment_card.dart';
-
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:health_connect/models/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
+import 'package:health_connect/services/notification_service.dart';
 import 'package:health_connect/theme/colors.dart';
+import 'package:lottie/lottie.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Handling a background message ${message.messageId}');
+}
 
 class PatientNameWidget extends StatefulWidget {
   const PatientNameWidget({super.key});
@@ -20,11 +25,43 @@ class PatientNameWidget extends StatefulWidget {
 
 class _PatientNameWidgetState extends State<PatientNameWidget> {
   String patientName = '';
+  String? mtoken = '';
+
+  void setupPushNotification() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    if (token != null) {
+      print('My toke is' + token);
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Get the email of the currently logged-in user
+        String? userEmail = user.email;
+        print('userEmail:$userEmail');
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('Email', isEqualTo: userEmail)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            doc.reference.update({
+              'fcmToken': token,
+            });
+          });
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super
         .initState(); // Call the method to retrieve the patient ID when the screen initializes
     _getPatientName();
+    setupPushNotification();
+    PushNotifications.initInfo();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   final AuthService _authService =
@@ -42,7 +79,7 @@ class _PatientNameWidgetState extends State<PatientNameWidget> {
   Widget build(BuildContext context) {
     return Text(
       'Welcome $patientName',
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
       ),
@@ -94,16 +131,16 @@ class HomePage extends ConsumerWidget {
             ),
             title: Text(
               doctor.name,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              "${doctor.speciality} in ${doctor.department} Department",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              "${doctor.speciality} , ${doctor.department} Department",
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
               size: 40,
-              color: mediumBlueGrayColor,
+              color: AppColors.mediumBlueGrayColor,
             ),
           ),
         );
@@ -120,7 +157,7 @@ class HomePage extends ConsumerWidget {
               onPressed: signUserOut,
               icon: const Icon(
                 Icons.logout,
-                color: mediumBlueGrayColor,
+                color: AppColors.mediumBlueGrayColor,
               ))
         ],
       ),
@@ -132,28 +169,51 @@ class HomePage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                PatientNameWidget(),
+                const PatientNameWidget(),
 
                 SizedBox(
                   height: screenHeight * 0.02,
                 ),
-                const Text(
-                  'Appointment Today',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: screenHeight * 0.08,
+                  child: DefaultTextStyle(
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.mediumBlueGrayColor),
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          'Get started finding the care you\'re looking for',
+                          speed: const Duration(
+                              milliseconds: 100), // Adjust speed as needed
+                        ),
+                      ],
+                      totalRepeatCount: 10, // Animation will run only once
+                      pause: const Duration(
+                          milliseconds:
+                              5000), // Pause after animation completes
+                      displayFullTextOnTap:
+                          true, // Allow tapping to display full text
+                      stopPauseOnTap: true, // Stop pausing on tap
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //display appointment card here
-                const AppointmentCard(),
-                const SizedBox(
-                  height: 20,
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: Lottie.asset(
+                    'assets/homepage_animation.json',
+                    height: 120,
+                    width: 120,
+                  ),
                 ),
 
                 Center(
                   child: TextField(
                     controller: searchController,
                     onChanged: (value) {
+                      ref.read(isfilteredByDepartment.notifier).state = false;
                       ref.read(searchNameProvider.notifier).state = value;
                     },
                     style: const TextStyle(color: Colors.black),
@@ -171,7 +231,8 @@ class HomePage extends ConsumerWidget {
                       prefixIcon: const Padding(
                         padding: EdgeInsets.only(
                             left: 8.0, right: 8.0), // Adjust padding as needed
-                        child: Icon(Icons.search, color: mediumBlueGrayColor),
+                        child: Icon(Icons.search,
+                            color: AppColors.mediumBlueGrayColor),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 14.0,
@@ -181,7 +242,7 @@ class HomePage extends ConsumerWidget {
                 ),
 
                 SizedBox(
-                  height: screenHeight * 0.02,
+                  height: screenHeight * 0.03,
                 ),
                 const Text(
                   'Departments',
@@ -191,7 +252,7 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.01,
+                  height: screenHeight * 0.02,
                 ),
                 StreamBuilder(
                   stream: readDoctor(),
@@ -221,7 +282,7 @@ class HomePage extends ConsumerWidget {
                               },
                               child: Card(
                                 margin: const EdgeInsets.only(right: 16),
-                                color: mediumBlueGrayColor,
+                                color: AppColors.mediumBlueGrayColor,
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 10),
@@ -265,10 +326,6 @@ class HomePage extends ConsumerWidget {
                       return Text('Something went wrong! ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       var doctors = snapshot.data!;
-                      List<String> departmentList = doctors
-                          .map((doctor) => doctor.department)
-                          .toSet()
-                          .toList();
                       String searchName = ref.watch(searchNameProvider);
 
                       if (searchName.isNotEmpty &&
@@ -288,7 +345,7 @@ class HomePage extends ConsumerWidget {
 
                       if (doctors.isEmpty) {
                         return Container(
-                          padding: EdgeInsets.all(
+                          padding: const EdgeInsets.all(
                               16.0), // Add padding for better visual appeal
                           decoration: BoxDecoration(
                             color: Colors.grey[
@@ -320,7 +377,8 @@ class HomePage extends ConsumerWidget {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: mediumBlueGrayColor, width: 2),
+                                  color: AppColors.mediumBlueGrayColor,
+                                  width: 2),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
