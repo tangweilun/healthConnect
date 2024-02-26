@@ -123,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   'Let\'s create an account for you!',
                   style: GoogleFonts.roboto(
-                      color: darkNavyBlueColor, fontSize: 16),
+                      color: AppColors.darkNavyBlue, fontSize: 16),
                 ),
                 SizedBox(
                   height: screenHeight * 0.01,
@@ -177,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             _isMale = value!;
                           });
                         }),
-                    Text('Male'),
+                    const Text('Male'),
                     Radio(
                       value: false,
                       groupValue: _isMale,
@@ -187,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    Text('Female'),
+                    const Text('Female'),
                   ],
                 ),
                 SizedBox(
@@ -370,7 +370,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       child: SizedBox(
         width: screenWidth * 0.76,
         child: InputDecorator(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Date of Birth',
             hintText: 'Select Date',
             border: OutlineInputBorder(),
@@ -380,9 +380,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             children: <Widget>[
               Text(
                 "${selectedDate.toLocal()}".split(' ')[0],
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
-              Icon(Icons.calendar_today),
+              const Icon(Icons.calendar_today),
             ],
           ),
         ),

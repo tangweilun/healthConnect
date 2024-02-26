@@ -299,7 +299,7 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                           borderRadius: BorderRadius.circular(15),
                           color: _currentindex == index
-                              ? mediumBlueGrayColor
+                              ? AppColors.mediumBlueGrayColor
                               : null,
                         ),
                         alignment: Alignment.center,
@@ -343,7 +343,7 @@ class _BookingPageState extends State<BookingPage> {
       rowHeight: 48,
       calendarStyle: const CalendarStyle(
           todayDecoration: BoxDecoration(
-              color: mediumBlueGrayColor, shape: BoxShape.circle)),
+              color: AppColors.mediumBlueGrayColor, shape: BoxShape.circle)),
       availableCalendarFormats: const {
         CalendarFormat.month: "Month",
       },

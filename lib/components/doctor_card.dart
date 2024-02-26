@@ -24,7 +24,7 @@ class _DoctorCardState extends State<DoctorCard> {
       child: GestureDetector(
         child: Card(
           elevation: 5,
-          color: paleGreyColor,
+          color: AppColors.paleGrey,
           child: Row(children: [
             SizedBox(
               width: screenWidth * 0.33,

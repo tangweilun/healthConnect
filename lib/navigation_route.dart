@@ -186,8 +186,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 4,
-        selectedIconTheme: const IconThemeData(color: mediumBlueGrayColor),
-        selectedItemColor: mediumBlueGrayColor, // Change selected item color
+        selectedIconTheme:
+            const IconThemeData(color: AppColors.mediumBlueGrayColor),
+        selectedItemColor:
+            AppColors.mediumBlueGrayColor, // Change selected item color
         unselectedItemColor: Colors.black, // Change unselected item color
         selectedLabelStyle: const TextStyle(
             color: Colors.black,

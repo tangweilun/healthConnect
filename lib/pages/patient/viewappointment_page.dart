@@ -25,7 +25,7 @@ class ResheduleButton extends ConsumerWidget {
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: mediumBlueGrayColor,
+          backgroundColor: AppColors.mediumBlueGrayColor,
         ),
         onPressed: () {
           ref.read(selectedDoctorProvider.notifier).updateDoctorModel(doctor);
@@ -143,7 +143,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
             'Appointment Schedule',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: mediumBlueGrayColor,
+              color: AppColors.mediumBlueGrayColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -193,7 +193,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   width: 100,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: mediumBlueGrayColor,
+                    color: AppColors.mediumBlueGrayColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
@@ -367,7 +367,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   DateFormat('yyyy-MM-dd')
                                                       .format(schedule.date),
                                                   style: const TextStyle(
-                                                    color: darkNavyBlueColor,
+                                                    color:
+                                                        AppColors.darkNavyBlue,
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -375,7 +376,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                 ),
                                                 const Icon(
                                                   Icons.access_alarm,
-                                                  color: darkNavyBlueColor,
+                                                  color: AppColors.darkNavyBlue,
                                                   size: 17,
                                                 ),
                                                 const SizedBox(
@@ -387,7 +388,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   DateFormat('hh:mm a')
                                                       .format(schedule.date),
                                                   style: const TextStyle(
-                                                      color: darkNavyBlueColor),
+                                                      color: AppColors
+                                                          .darkNavyBlue),
                                                 ))
                                               ]),
                                         ),
@@ -426,8 +428,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                                   child: const Text(
                                                     'Cancel',
                                                     style: TextStyle(
-                                                        color:
-                                                            darkNavyBlueColor),
+                                                        color: AppColors
+                                                            .darkNavyBlue),
                                                   ),
                                                 ),
                                               ),

@@ -98,7 +98,7 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                           vertical: 8, horizontal: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
-                        side: const BorderSide(color: darkNavyBlueColor),
+                        side: const BorderSide(color: AppColors.darkNavyBlue),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
@@ -185,51 +185,6 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                     );
                   },
                 );
-                // return ListView.builder(
-                //   itemCount: snapshot.data!.docs.length,
-                //   itemBuilder: (context, index) {
-                //     var record = snapshot.data!.docs[index];
-                //     var data = record.data() as Map<String, dynamic>;
-                //     String formattedDate = _formatDate(data['date']);
-                //     return Card(
-                //       margin: const EdgeInsets.symmetric(
-                //           vertical: 8, horizontal: 16),
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(15),
-                //         side: const BorderSide(color: darkNavyBlueColor),
-                //       ),
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(12),
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             Text(
-                //               'Date: $formattedDate',
-                //               style: const TextStyle(
-                //                   fontSize: 16, fontWeight: FontWeight.bold),
-                //             ),
-                //             const SizedBox(height: 4),
-                //             Text('Diagnosis: ${data['diagnosis']}',
-                //                 style: const TextStyle(fontSize: 14)),
-                //             const SizedBox(height: 2),
-                //             Text('Doctor: ${data['doctor_name']}',
-                //                 style: const TextStyle(fontSize: 14)),
-                //             const SizedBox(height: 2),
-                //             Text('Notes: ${data['notes']}',
-                //                 style: const TextStyle(fontSize: 14)),
-                //             // SizedBox(height: 2),
-                //             Text(
-                //                 'Prescribed Medication: ${data['prescribed_medication']}',
-                //                 style: const TextStyle(fontSize: 14)),
-                //             // SizedBox(height: 2),
-                //             Text('Symptoms: ${data['symptoms']}',
-                //                 style: const TextStyle(fontSize: 14)),
-                //           ],
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
           ),

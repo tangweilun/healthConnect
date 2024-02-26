@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 Text('Welcome back ',
                     style: GoogleFonts.roboto(
-                        color: mediumBlueGrayColor, fontSize: 24)),
+                        color: AppColors.mediumBlueGrayColor, fontSize: 24)),
                 SizedBox(
                   height: screenHeight * 0.03,
                 ),
@@ -152,7 +152,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle(
-                              color: mediumBlueGrayColor, fontSize: 16),
+                              color: AppColors.mediumBlueGrayColor,
+                              fontSize: 16),
                         ),
                       ),
                     ],

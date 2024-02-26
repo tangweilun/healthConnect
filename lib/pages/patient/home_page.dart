@@ -140,7 +140,7 @@ class HomePage extends ConsumerWidget {
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
               size: 40,
-              color: mediumBlueGrayColor,
+              color: AppColors.mediumBlueGrayColor,
             ),
           ),
         );
@@ -157,7 +157,7 @@ class HomePage extends ConsumerWidget {
               onPressed: signUserOut,
               icon: const Icon(
                 Icons.logout,
-                color: mediumBlueGrayColor,
+                color: AppColors.mediumBlueGrayColor,
               ))
         ],
       ),
@@ -181,7 +181,7 @@ class HomePage extends ConsumerWidget {
                     style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: mediumBlueGrayColor),
+                        color: AppColors.mediumBlueGrayColor),
                     child: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
@@ -231,7 +231,8 @@ class HomePage extends ConsumerWidget {
                       prefixIcon: const Padding(
                         padding: EdgeInsets.only(
                             left: 8.0, right: 8.0), // Adjust padding as needed
-                        child: Icon(Icons.search, color: mediumBlueGrayColor),
+                        child: Icon(Icons.search,
+                            color: AppColors.mediumBlueGrayColor),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 14.0,
@@ -281,7 +282,7 @@ class HomePage extends ConsumerWidget {
                               },
                               child: Card(
                                 margin: const EdgeInsets.only(right: 16),
-                                color: mediumBlueGrayColor,
+                                color: AppColors.mediumBlueGrayColor,
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 10),
@@ -376,7 +377,8 @@ class HomePage extends ConsumerWidget {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: mediumBlueGrayColor, width: 2),
+                                  color: AppColors.mediumBlueGrayColor,
+                                  width: 2),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
