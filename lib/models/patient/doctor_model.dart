@@ -40,7 +40,7 @@ class Doctor {
       email: json['email'] ?? '',
       numberOfPreviousPatient:
           json['number_of_previous_patient']?.toString() ?? '',
-      phoneNumber: json['phoneNumber'] ?? '',
+      phoneNumber: json['phone_number'] ?? '',
       speciality: json['speciality'] ?? '',
       workingExperience: json['work_experience'] ?? '',
 

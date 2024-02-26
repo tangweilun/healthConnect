@@ -29,6 +29,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_connect/navigation_route.dart';
 import 'package:health_connect/pages/doctor/doctor_home_page.dart';
+import 'package:health_connect/pages/manager/managerHomePage.dart';
 
 import 'package:health_connect/pages/patient/loginOrRegister_page.dart';
 
@@ -42,7 +43,7 @@ class AuthPage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData) {
             User? user = FirebaseAuth.instance.currentUser;
@@ -65,7 +66,7 @@ class AuthPage extends StatelessWidget {
                 }),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasData) {
                     var role = snapshot.data!['UserRole'];
@@ -73,6 +74,8 @@ class AuthPage extends StatelessWidget {
                       return NavigationRoute();
                     } else if (role == 'Doctor') {
                       return DoctorHomePage(doctorEmail: userEmail!);
+                    } else if (role == 'Manager') {
+                      return HomePage();
                     } else {
                       // Handle other roles or situations
                       return Container();
