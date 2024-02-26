@@ -190,9 +190,9 @@ class AuthPage extends StatelessWidget {
 
                     // Determine which page to navigate based on user role
                     switch (userRole) {
-                      case 'patient':
+                      case 'Patient':
                         return NavigationRoute(); // Navigate to patient page
-                      case 'doctor':
+                      case 'Doctor':
                         return DoctorHomePage(
                           doctorEmail: doctoremail ?? '',
                         ); // Navigate to doctor page
