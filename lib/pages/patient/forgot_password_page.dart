@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/pages/custom_appbar.dart';
-import 'package:health_connect/pages/login_page.dart';
+
+import 'package:health_connect/pages/patient/login_page.dart';
 import 'package:health_connect/theme/colors.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

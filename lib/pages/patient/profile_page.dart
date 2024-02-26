@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:health_connect/models/patient_model.dart';
-import 'package:health_connect/pages/custom_appbar.dart';
+import 'package:health_connect/pages/patient/custom_appbar.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:intl/intl.dart';
 

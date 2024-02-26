@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/pages/forgot_password_page.dart';
-import 'package:health_connect/pages/login_page.dart';
-import 'package:health_connect/pages/medical_record_dialog.dart';
-import 'package:health_connect/pages/profile_page.dart';
-import 'package:health_connect/pages/viewappointment_page.dart';
-import 'package:health_connect/pages/booking_page.dart';
-import 'package:health_connect/pages/doctor_detail_page.dart';
-import 'package:health_connect/pages/home_page.dart';
-import 'package:health_connect/pages/success_booked.dart';
+import 'package:health_connect/pages/patient/forgot_password_page.dart';
+import 'package:health_connect/pages/patient/login_page.dart';
+import 'package:health_connect/pages/patient/medical_record_dialog.dart';
+import 'package:health_connect/pages/patient/profile_page.dart';
+import 'package:health_connect/pages/patient/viewappointment_page.dart';
+import 'package:health_connect/pages/patient/booking_page.dart';
+import 'package:health_connect/pages/patient/doctor_detail_page.dart';
+import 'package:health_connect/pages/patient/home_page.dart';
+import 'package:health_connect/pages/patient/success_booked.dart';
 import 'package:health_connect/theme/colors.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =

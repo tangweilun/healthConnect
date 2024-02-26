@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:health_connect/components/my_button.dart';
 import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/pages/forgot_password_page.dart';
+import 'package:health_connect/pages/patient/forgot_password_page.dart';
 
 import 'package:health_connect/theme/colors.dart';
 import 'package:lottie/lottie.dart';
