@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/patient/my_button.dart';
 import 'package:health_connect/id_generator.dart';
-import 'package:health_connect/models/appointment_model.dart';
+import 'package:health_connect/models/patient/appointment_model.dart';
 
 import 'package:health_connect/pages/patient/custom_appbar.dart';
 import 'package:health_connect/providers/doctor_provider.dart';

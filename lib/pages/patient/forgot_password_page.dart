@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'package:health_connect/components/my_textfield.dart';
+import 'package:health_connect/components/patient/my_textfield.dart';
 
 import 'package:health_connect/pages/patient/login_page.dart';
 import 'package:health_connect/theme/colors.dart';

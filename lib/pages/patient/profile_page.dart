@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:health_connect/models/patient_model.dart';
+import 'package:health_connect/models/patient/patient_model.dart';
 import 'package:health_connect/pages/patient/custom_appbar.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:intl/intl.dart';

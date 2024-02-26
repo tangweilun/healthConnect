@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:health_connect/components/my_textfield.dart';
-import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/patient/my_button.dart';
+import 'package:health_connect/components/patient/my_textfield.dart';
 import 'package:health_connect/id_generator.dart';
 import 'package:health_connect/theme/colors.dart';
 

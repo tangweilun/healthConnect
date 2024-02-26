@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/patient/my_button.dart';
 
 import 'package:health_connect/pages/patient/custom_appbar.dart';
 import 'package:health_connect/providers/doctor_provider.dart';

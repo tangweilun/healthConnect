@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/components/my_button.dart';
+import 'package:health_connect/components/patient/my_button.dart';
 import 'package:lottie/lottie.dart';
 
 class AppointmentBooked extends StatelessWidget {

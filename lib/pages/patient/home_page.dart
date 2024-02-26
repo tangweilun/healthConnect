@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:health_connect/models/doctor_model.dart';
+import 'package:health_connect/models/patient/doctor_model.dart';
 import 'package:health_connect/providers/doctor_provider.dart';
 import 'package:health_connect/services/auth_services.dart';
 import 'package:health_connect/services/notification_service.dart';

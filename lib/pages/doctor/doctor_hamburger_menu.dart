@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
+import 'package:health_connect/auth_page.dart';
 import 'package:health_connect/theme/colors.dart';
-import 'package:health_connect/pages/auth_page.dart';
 import 'package:health_connect/pages/doctor/doctor_user_manual.dart';
 
 class HamburgerMenu extends StatelessWidget {

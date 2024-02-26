@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:health_connect/pages/doctor/doctor_nav_bar.dart';
@@ -24,10 +26,38 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
   int _currentIndex = 0;
   Doctor? doctor;
 
+  void setupPushNotification() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    if (token != null) {
+      print('My toke is' + token);
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Get the email of the currently logged-in user
+        String? userEmail = user.email;
+        print('userEmail:$userEmail');
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('Email', isEqualTo: userEmail)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            doc.reference.update({
+              'fcmToken': token,
+            });
+          });
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchDoctorInfo();
+    setupPushNotification();
   }
 
   void fetchDoctorInfo() async {

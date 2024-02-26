@@ -1,4 +1,4 @@
-import 'package:health_connect/models/doctor_model.dart';
+import 'package:health_connect/models/patient/doctor_model.dart';
 import 'package:riverpod/riverpod.dart';
 
 final selectedDoctorProvider =
