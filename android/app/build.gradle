@@ -25,9 +25,8 @@ if (flutterVersionName == null) {
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
+       keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+ }
 android {
     namespace "com.example.health_connect"
     compileSdkVersion 33
