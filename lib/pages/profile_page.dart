@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_connect/models/patient_model.dart';
@@ -83,7 +84,42 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               _buildEditableRow('Name', patient.name, 'name'),
-              _buildEditableRow('Email', patient.email, 'email'),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Email",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          patient.email,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     _showEditDialog(context, fieldName, _controller);
+                      //   },
+                      //   child: const Icon(
+                      //     Icons.mode_edit_outline_rounded,
+                      //     color: Colors.blue,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  const Divider(color: Colors.grey),
+                  const SizedBox(height: 16),
+                ],
+              ),
               _buildEditableRow(
                   'Phone Number', patient.phoneNumber, 'phone number'),
               _buildEditableRow(
@@ -312,6 +348,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (fieldName == 'name') {
       data['name'] = newValue;
     } else if (fieldName == 'email') {
+      // updateEmail(newValue);
+
       data['email'] = newValue;
     } else if (fieldName == 'phone number') {
       data['phone_number'] = newValue;
@@ -335,4 +373,17 @@ class _ProfilePageState extends State<ProfilePage> {
       print('Failed to update field $fieldName: $error');
     });
   }
+
+  // void updateEmail(String email, String newEmail) async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   // Update the email
+  //   await user?.updateEmail(email);
+  //       final docAppointment =
+  //       FirebaseFirestore.instance.collection('Users').doc();
+  //   docAppointment.update({
+  //     'date': newSelectedDateTime,
+  //     'status': 'pending',
+  //   });
+
+  // }
 }

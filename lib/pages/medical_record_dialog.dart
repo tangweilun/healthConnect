@@ -80,7 +80,7 @@ class _PatientDetailsPageState extends State<PatientDetailsPage> {
                   return const Center(
                     child: Text(
                       'No medical records found for you.',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,

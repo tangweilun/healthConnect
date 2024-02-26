@@ -57,39 +57,94 @@ class NakeAppointmentButton extends ConsumerWidget {
     required this.patientName,
     required this.appointmentID,
   }) : super(key: key);
-  Future createAppointment(Appointment appointment) async {
+  Future createAppointment(Appointment appointment, String email) async {
+    String token;
     final docAppointment =
         FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
     final json = appointment.toJson();
     await docAppointment.set(json);
-    PushNotifications.sendPushMessage(
-        'ea8qttQmQ5uNNUjaLpePc-:APA91bGqQ2kWx5a8m4jsHjSY4wfpr1FdVhmgMB4DrGUSu_g1Ye6GkEpGE1qiE_zGHd4fe8h9LMvXr2vpIF6lZ2SrY7R03RJ_rq-u4bgnv4IuXeMYiGbtuSwQu7uowINEdmknm43NN7Gj',
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('Email', isEqualTo: email)
+            .limit(1) // Limit the result to 1 document
+            .get();
+
+    // Check if there are any documents
+    if (querySnapshot.docs.isNotEmpty) {
+      var document = querySnapshot.docs.first;
+      token = document.data()['fcmToken']; // Access a particular field
+      PushNotifications.sendPushMessage(
+        token,
+        'Patient:$patientName has requested an appointment for ${selectedDateTime.year}/${selectedDateTime.month}/${selectedDateTime.day} at ${selectedTime.hour}:${selectedTime.minute}0. Please review and confirm.',
         'Appointment Request',
-        'Patient:$patientName has requested an appointment for ${selectedDateTime.year}/${selectedDateTime.month}/${selectedDateTime.day}at ${selectedTime.hour}:${selectedTime.minute}. Please review and confirm.');
+      );
+    } else {
+      print('No matching documents found.');
+    }
   }
 
-  Future rescheduleAppointment(
-      String appointmentID, DateTime newSelectedDateTime) async {
+  Future rescheduleAppointment(String appointmentID,
+      DateTime newSelectedDateTime, String doctorId) async {
+    String token;
+    String email;
     final docAppointment =
         FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
     docAppointment.update({
       'date': newSelectedDateTime,
       'status': 'pending',
     });
-    PushNotifications.sendPushMessage(
-        'ea8qttQmQ5uNNUjaLpePc-:APA91bGqQ2kWx5a8m4jsHjSY4wfpr1FdVhmgMB4DrGUSu_g1Ye6GkEpGE1qiE_zGHd4fe8h9LMvXr2vpIF6lZ2SrY7R03RJ_rq-u4bgnv4IuXeMYiGbtuSwQu7uowINEdmknm43NN7Gj',
-        'Appointment Request',
-        'Patient: [Patient Name] has requested an appointment. Please review and confirm.');
+
+    // Check if there are any documents
+    QuerySnapshot<Map<String, dynamic>> querySnapshotDoctor =
+        await FirebaseFirestore.instance
+            .collection('doctor')
+            .where('doctor_id', isEqualTo: doctorId)
+            .get();
+
+    // Check if there are any documents
+    if (querySnapshotDoctor.docs.isNotEmpty) {
+      var document = querySnapshotDoctor.docs.first;
+      email = document.data()['email']; // Access a particular field
+
+      // Check if there are any documents
+      QuerySnapshot<Map<String, dynamic>> querySnapshotUser =
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .where('Email', isEqualTo: email)
+              .limit(1) // Limit the result to 1 document
+              .get();
+
+      // Check if there are any documents
+      if (querySnapshotUser.docs.isNotEmpty) {
+        var document = querySnapshotUser.docs.first;
+        token = document.data()['fcmToken']; // Access a particular field
+
+        PushNotifications.sendPushMessage(
+          token,
+          'Patient:$patientName has requested an appointment for ${selectedDateTime.year}/${selectedDateTime.month}/${selectedDateTime.day} at ${selectedTime.hour}:${selectedTime.minute}0. Please review and confirm.',
+          'Appointment Reschedule Request',
+        );
+      } else {
+        print('No matching documents found in rescedule notification.');
+      }
+    } else {
+      print('No matching documents found in rescedule notification.');
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String rescheduleAppointmentID = '';
+    String doctorId = '';
     // Retrieve the values of _timeSelected and _dateSelected from the provider
     final selectedDoctor = ref.watch(selectedDoctorProvider);
+
     final isReschedule = ref.watch(rescheduleProvider);
     if (isReschedule) {
       rescheduleAppointmentID = ref.watch(appointmentIDProvider);
+      doctorId = ref.watch(doctorIdProvider);
     }
 
     // You need to define _dateSelected somewhere or replace it with the appropriate provider
@@ -111,9 +166,9 @@ class NakeAppointmentButton extends ConsumerWidget {
 
         if (isReschedule) {
           rescheduleAppointment(
-              rescheduleAppointmentID, combineDateTimeAndTimeOfDay());
+              rescheduleAppointmentID, combineDateTimeAndTimeOfDay(), doctorId);
         } else {
-          createAppointment(appointment);
+          createAppointment(appointment, selectedDoctor.email);
         }
         //navigato to the appointment booked page
         GoRouter.of(context)

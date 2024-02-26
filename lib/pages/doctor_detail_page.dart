@@ -58,8 +58,8 @@ class DoctorDetails extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                           border: Border.all(
@@ -73,7 +73,7 @@ class DoctorDetails extends ConsumerWidget {
                         height: 40,
                         child: Text(
                           doctor.speciality,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 10,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
@@ -84,8 +84,8 @@ class DoctorDetails extends ConsumerWidget {
                         width: screenWidth * 0.02,
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                           border: Border.all(
@@ -100,7 +100,7 @@ class DoctorDetails extends ConsumerWidget {
                         child: Center(
                           child: Text(
                             doctor.department,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 10,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
@@ -150,7 +150,7 @@ class DoctorDetails extends ConsumerWidget {
                           width: screenWidth * 0.75,
                           child: Text(
                             doctor.description,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                             ),
