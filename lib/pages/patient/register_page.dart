@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: screenHeight * 0.05,
+                  height: screenHeight * 0.03,
                 ),
                 //logo
                 Image.asset(
@@ -323,7 +323,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: screenHeight * 0.02),
               ],
             ),
           ),
