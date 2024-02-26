@@ -24,6 +24,76 @@
 //   }
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:health_connect/navigation_route.dart';
+import 'package:health_connect/pages/doctor/doctor_home_page.dart';
+
+import 'package:health_connect/pages/patient/loginOrRegister_page.dart';
+
+class AuthPage extends StatelessWidget {
+  const AuthPage({Key? key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasData) {
+            User? user = FirebaseAuth.instance.currentUser;
+
+            if (user != null) {
+              // Get the email of the currently logged-in user
+              String? userEmail = user.email;
+
+              return FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('Users')
+                    .where('Email', isEqualTo: userEmail)
+                    .get()
+                    .then((QuerySnapshot querySnapshot) {
+                  if (querySnapshot.docs.isNotEmpty) {
+                    return querySnapshot.docs.first;
+                  } else {
+                    return Future.value(null);
+                  }
+                }),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  if (snapshot.hasData) {
+                    var role = snapshot.data!['UserRole'];
+                    if (role == 'Patient') {
+                      return NavigationRoute();
+                    } else if (role == 'Doctor') {
+                      return DoctorHomePage(doctorEmail: userEmail!);
+                    } else {
+                      // Handle other roles or situations
+                      return Container();
+                    }
+                  } else {
+                    return Container(); // Handle error state
+                  }
+                },
+              );
+            } else {
+              return LoginOrRegisterPage();
+            }
+          } else {
+            return LoginOrRegisterPage();
+          }
+        },
+      ),
+    );
+  }
+}
+
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
@@ -148,73 +218,74 @@
 //   }
 // }
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:health_connect/navigation_route.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
+// import 'package:health_connect/navigation_route.dart';
 
-import 'package:health_connect/pages/patient/loginOrRegister_page.dart';
-import 'package:health_connect/pages/doctor/doctor_home_page.dart';
+// import 'package:health_connect/pages/patient/loginOrRegister_page.dart';
+// import 'package:health_connect/pages/doctor/doctor_home_page.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({Key? key});
+// class AuthPage extends StatelessWidget {
+//   const AuthPage({Key? key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show a loading indicator while fetching user data.
-          }
-          if (snapshot.hasData) {
-            return FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('Users')
-                  .doc(snapshot.data!.email)
-                  .get(),
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // Show a loading indicator while fetching user data.
-                }
-                if (userSnapshot.hasData && userSnapshot.data != null) {
-                  // Fetch user role from Firestore document
-                  var userData =
-                      userSnapshot.data!.data() as Map<String, dynamic>?;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: StreamBuilder<User?>(
+//         stream: FirebaseAuth.instance.authStateChanges(),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return CircularProgressIndicator(); // Show a loading indicator while fetching user data.
+//           }
+//           if (snapshot.hasData) {
+            
+//             return FutureBuilder<DocumentSnapshot>(
+//               future: FirebaseFirestore.instance
+//                   .collection('Users')
+//                   .doc(snapshot.data!.email)
+//                   .get(),
+//               builder: (context, userSnapshot) {
+//                 if (userSnapshot.connectionState == ConnectionState.waiting) {
+//                   return CircularProgressIndicator(); // Show a loading indicator while fetching user data.
+//                 }
+//                 if (userSnapshot.hasData && userSnapshot.data != null) {
+//                   // Fetch user role from Firestore document
+//                   var userData =
+//                       userSnapshot.data!.data() as Map<String, dynamic>?;
 
-                  // Check if the document contains user data
-                  if (userData != null && userData.containsKey('UserRole')) {
-                    String? userRole = userData['UserRole'];
-                    String? doctoremail = userData['Email'];
+//                   // Check if the document contains user data
+//                   if (userData != null && userData.containsKey('UserRole')) {
+//                     String? userRole = userData['UserRole'];
+//                     String? doctoremail = userData['Email'];
 
-                    // Determine which page to navigate based on user role
-                    switch (userRole) {
-                      case 'Patient':
-                        return NavigationRoute(); // Navigate to patient page
-                      case 'Doctor':
-                        return DoctorHomePage(
-                          doctorEmail: doctoremail ?? '',
-                        ); // Navigate to doctor page
-                      default:
-                        return Text(
-                            'Unknown user role'); // Handle unknown user roles
-                    }
-                  } else {
-                    return Text(
-                        'User role not found'); // Handle case where UserRole field is missing
-                  }
-                } else {
-                  return Text(
-                      'User data not found'); // Handle cases where user data is missing
-                }
-              },
-            );
-          } else {
-            return const LoginOrRegisterPage(); // Show login/register page if user is not authenticated
-          }
-        },
-      ),
-    );
-  }
-}
+//                     // Determine which page to navigate based on user role
+//                     switch (userRole) {
+//                       case 'Patient':
+//                         return NavigationRoute(); // Navigate to patient page
+//                       case 'Doctor':
+//                         return DoctorHomePage(
+//                           doctorEmail: doctoremail ?? '',
+//                         ); // Navigate to doctor page
+//                       default:
+//                         return Text(
+//                             'Unknown user role'); // Handle unknown user roles
+//                     }
+//                   } else {
+//                     return Text(
+//                         'User role not found'); // Handle case where UserRole field is missing
+//                   }
+//                 } else {
+//                   return Text(
+//                       'User data not found'); // Handle cases where user data is missing
+//                 }
+//               },
+//             );
+//           } else {
+//             return const LoginOrRegisterPage(); // Show login/register page if user is not authenticated
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
