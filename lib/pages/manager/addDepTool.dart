@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'theme/colors.dart';
+import 'package:health_connect/theme/colors.dart';
 
 class AddDepTool extends StatelessWidget {
   final TextEditingController departmentNameController =

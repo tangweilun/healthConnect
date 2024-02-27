@@ -42,7 +42,7 @@ class Doctor {
           json['number_of_previous_patient']?.toString() ?? '',
       phoneNumber: json['phone_number'] ?? '',
       speciality: json['speciality'] ?? '',
-      workingExperience: json['work_experience'] ?? '',
+      workingExperience: json['work_experience']?.toString() ?? '',
 
       // Add more properties as needed
     );
