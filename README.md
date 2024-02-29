@@ -2,6 +2,8 @@
 
 Welcome to our HealthCare App! This Flutter mobile application is designed to streamline your healthcare experience with an intuitive user interface and essential features for managing appointments and finding doctors. 
 
+## Demo Video:
+https://github.com/tangweilun/healthConnect/assets/77373471/b29a05f1-c9d9-4019-baff-a484df073935
 ## Features:
 
 - **Appointment Management:** Easily schedule, cancel, or reschedule appointments with healthcare providers.
