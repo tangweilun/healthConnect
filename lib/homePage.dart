@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:manager4/appReport.dart';
 import 'manageDepOptions.dart';
-import 'theme/colors.dart'; // Import your custom colors
+import 'theme/colors.dart';
 import 'manage_users_options.dart';
-import 'naviBar.dart'; // Import your naviBar.dart file with a prefix
-import 'topScreen.dart'; // Import your TopScreen widget
+import 'naviBar.dart';
+import 'topScreen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,7 +34,7 @@ class HomePage extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, backgroundColor: AppColors.darkNavyBlue, // Text color
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50), // Adjust padding here
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                   ),
                   icon: const Icon(Icons.people), // Icon for Manage Users button
                   label: const Text(
@@ -62,15 +63,32 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Navigate to app report page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AppReport()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, backgroundColor: AppColors.blueGray, // Text color
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50), // Adjust padding here
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                   ),
                   icon: const Icon(Icons.receipt), // Icon for App Report button
                   label: const Text(
                     'App Report',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Implement logout functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.red, // Text color
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                  ),
+                  child: const Text(
+                    'Logout',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
@@ -79,7 +97,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const NaviBar(), // Add NavigationBar here
+      bottomNavigationBar: const NaviBar(),
     );
   }
 }
